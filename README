@@ -1,0 +1,21 @@
+# Actix + MiniJinja Project
+
+This project demonstrates how to build a web application using [Actix Web](https://actix.rs/) as the backend framework and [MiniJinja](https://github.com/mitsuhiko/minijinja) as the template engine for rendering HTML.
+
+## Features
+
+- Fast and robust HTTP server powered by Actix Web
+- Dynamic HTML rendering with MiniJinja templates
+- Easy to extend and customize
+
+## Getting Started
+
+### Prerequisites
+
+- Rust (latest stable version recommended)
+- Cargo (comes with Rust)
+
+### Installation
+
+1. Clone the repository
+2. Run `cargo run`
