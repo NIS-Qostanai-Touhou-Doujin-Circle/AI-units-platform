@@ -10,7 +10,7 @@
     @apply overflow-y-scroll pb-1;
 }
 .chat-message {
-    @apply p-2 pt-1 my-1 rounded-lg w-fit min-w-[40%];
+    @apply p-2 pt-1 my-1 rounded-lg w-fit min-w-[40%] max-w-[60%];
     @apply wrap-break-word;
     @apply shadow-lg;
     &.chat-message-sending {
@@ -26,7 +26,7 @@
         @apply py-0.5 px-2;
     }
     img {
-        @apply w-full;
+        @apply max-w-full;
     }
 }
 .chat-message-me {

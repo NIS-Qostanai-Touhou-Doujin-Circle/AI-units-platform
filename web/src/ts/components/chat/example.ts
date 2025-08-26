@@ -8,23 +8,24 @@ export function getExampleChatArgs(): ChatParams {
 				content: [
 					{
 						type: "text",
-						content: "Hello!",
+						content: "Здрастуте!",
 					},
 				],
 				side: "them",
 				wasEdited: false,
-				timestamp: new Date(new Date().getTime() - 120000),
+				timestamp: new Date(new Date().getTime() - 220000),
 			},
 			{
 				id: "2",
 				content: [
 					{
 						type: "reply",
-						content: "Hello!",
+						content: "Здрастуте!",
 					},
 					{
 						type: "text",
-						content: "Hi there!",
+						content:
+							"Здравстуйте! Меня зовут Самат С.С. Чем могу помочь?",
 					},
 					{
 						type: "image",
@@ -33,7 +34,48 @@ export function getExampleChatArgs(): ChatParams {
 				],
 				side: "me",
 				wasEdited: true,
-				timestamp: new Date(),
+				timestamp: new Date(new Date().getTime() - 120000),
+			},
+			{
+				id: "3",
+				content: [
+					{
+						type: "text",
+						content: "Можете ответить на вопрос?",
+					},
+				],
+				side: "them",
+				wasEdited: false,
+				timestamp: new Date(new Date().getTime() - 60000),
+			},
+			{
+				id: "4",
+				content: [
+					{
+						type: "text",
+						content:
+							"Конечно могу! В чём заключается Ваш вопрос? Смартфон Vivo.",
+					},
+				],
+				side: "me",
+				wasEdited: false,
+				timestamp: new Date(new Date().getTime() - 30000),
+			},
+			{
+				id: "5",
+				content: [
+                    {
+                        type: "reply",
+                        content: "Конечно могу! В чём заключается Ваш вопрос? Смартфон Vivo."
+                    },
+					{
+						type: "text",
+						content: "Есть два стула. На одном пики точенные, на другом",
+					},
+				],
+				side: "them",
+				wasEdited: false,
+				timestamp: new Date(new Date().getTime() - 15000),
 			},
 		],
 		me: {
