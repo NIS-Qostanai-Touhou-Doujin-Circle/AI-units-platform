@@ -18,8 +18,19 @@
     button, .button {
         @apply block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 w-fit;
         @apply transition-colors duration-100;
+        @apply cursor-pointer;
+        @apply text-center;
         &.primary {
             @apply bg-blue-500 hover:bg-blue-600;
+        }
+        &.warning {
+            @apply bg-amber-300 hover:bg-amber-400 text-yellow-900;
+        }
+        &.danger {
+            @apply bg-red-500 hover:bg-red-600 font-bold;
+        }
+        &.success {
+            @apply bg-green-500 hover:bg-green-600 font-bold;
         }
         &.icon {
             @apply p-0;
