@@ -1,6 +1,7 @@
 @layer base {
     body {
-        @apply bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 font-sans;
+        @apply bg-gray-100 dark:bg-gray-950 text-gray-950 dark:text-gray-50;
+        @apply min-h-screen font-sans;
     }
     h1 {
         @apply text-4xl font-bold;
@@ -8,13 +9,21 @@
     h2 {
         @apply text-3xl font-semibold;
     }
+    h3 {
+        @apply text-2xl font-semibold;
+    }
     button, .button {
-        @apply block px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700;
+        @apply block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 w-fit;
+        @apply transition-colors duration-100;
         &.primary {
-            @apply bg-blue-600 hover:bg-blue-700;
+            @apply bg-blue-500 hover:bg-blue-600;
         }
     }
     canvas {
-        @apply max-w-[400px] w-full max-h-[300px];
+        @apply max-w-[400px] w-full max-h-[300px] h-full;
+    }
+    .card {
+        @apply bg-white border border-gray-300 rounded-lg p-4 shadow-lg shadow-gray-200;
+        @apply dark:bg-gray-800 dark:border-gray-700 dark:shadow-none;
     }
 }
