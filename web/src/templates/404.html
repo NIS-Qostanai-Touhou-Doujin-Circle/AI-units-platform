@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="error-page">
+    <div class="error-container">
+        <!-- Main 404 Content -->
+        <div class="error-content">
+            <!-- Logo -->
+            <div class="error-logo">
+                <img id="error-logo" src="/static/assets/img/logo513x513.png" alt="AI Units Platform" />
+            </div>
+            
+            <!-- 404 Error -->
+            <div class="error-text">
+                <h1 class="error-code">404</h1>
+                <h2 class="error-title">Страница не найдена</h2>
+                <p class="error-description">
+                    К сожалению, запрашиваемая страница взлетела и взорвалась либо не существует.
+                </p>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="error-actions">
+                <a href="/" class="button primary">
+                    Вернуться на главную
+                </a>
+                <button onclick="history.back()" class="button">
+                    Назад
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Additional Help (moved to bottom) -->
+    <div class="error-help-bottom">
+        <p>
+            Если вы считаете, что это ошибка, пожалуйста, 
+            <a href="mailto:support@ai-units-platform.com">
+                свяжитесь с нами
+            </a>
+        </p>
+    </div>
+</main>
+
+<!-- Confetti container -->
+<div id="confetti-container"></div>
+
+<script src="/static/js/confetti.js" type="module"></script>
+{% endblock %}

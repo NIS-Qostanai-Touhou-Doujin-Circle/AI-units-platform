@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@layer components {
+    .error-page {
+        @apply lg:w-fit bg-white border-x border-gray-300 mx-auto px-4 lg:px-20 pt-10;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 80px; /* Space for fixed bottom text */
+    }
+
+    .error-container {
+        @apply grid grid-cols-12 gap-3 md:gap-4 place-items-center;
+        flex: 1;
+        min-height: calc(100vh - 160px); /* Account for padding and bottom text */
+    }
+
+    .error-content {
+        @apply col-span-full text-center space-y-6;
+    }
+
+    .error-logo {
+        @apply mx-auto w-fit mb-8;
+    }
+
+    .error-logo img {
+        @apply size-32 mx-auto opacity-60 cursor-pointer;
+        transition: transform 0.1s ease-in-out;
+        user-select: none;
+        transform: scale(1);
+    }
+
+    .error-logo img:hover {
+        transform: scale(1.15);
+    }
+
+    .error-logo img:active {
+        transform: scale(0.95);
+    }
+
+    .error-text {
+        @apply space-y-4;
+    }
+
+    .error-code {
+        @apply text-8xl font-bold text-gray-400;
+    }
+
+    .error-title {
+        @apply text-3xl font-semibold text-gray-700;
+    }
+
+    .error-description {
+        @apply text-lg text-gray-500 max-w-md mx-auto;
+    }
+
+    .error-actions {
+        @apply flex flex-col sm:flex-row gap-4 justify-center items-center mt-8;
+    }
+
+    .error-decorative-card {
+        @apply opacity-50;
+    }
+
+    .error-decorative-card.data-card h3 {
+        @apply text-lg font-normal text-slate-600;
+    }
+
+    .error-decorative-card.data-card data {
+        @apply text-xl md:text-3xl font-bold text-red-500;
+    }
+
+    .error-decorative-card .error-help-text {
+        @apply text-gray-600 mt-2;
+    }
+
+    .error-decorative-card.todo-card input[type="checkbox"] {
+        @apply pointer-events-none;
+    }
+
+    .error-help {
+        @apply col-span-full text-center mt-8;
+    }
+
+    .error-help p {
+        @apply text-sm text-gray-400;
+    }
+
+    .error-help a {
+        @apply text-blue-500 hover:text-blue-600 underline;
+    }
+
+    /* Bottom help section */
+    .error-help-bottom {
+        @apply text-center;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 600px;
+        z-index: 10;
+    }
+
+    .error-help-bottom p {
+        @apply text-sm text-gray-400;
+    }
+
+    .error-help-bottom a {
+        @apply text-blue-500 hover:text-blue-600 underline;
+    }
+
+    /* Media query for small screens or when content overflows */
+    @media (max-height: 700px), (max-width: 768px) {
+        .error-help-bottom {
+            position: static;
+            transform: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            width: auto;
+            max-width: none;
+        }
+    }
+
+    /* Confetti styles */
+    #confetti-container {
+        @apply fixed inset-0 pointer-events-none z-50;
+        overflow: hidden;
+    }
+
+    .confetti-piece {
+        @apply absolute object-contain;
+        /* Базовый размер увеличен для больших конфетти */
+        width: 40px;
+        height: 40px;
+        animation: confetti-fall linear forwards;
+        pointer-events: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-50px) rotate(0deg) scale(0.3);
+            opacity: 1;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(calc(100vh + 50px)) rotate(720deg) scale(0.1);
+            opacity: 0;
+        }
+    }
+
+    /* Remove fadeInUp from logo, keep for other elements */
+    .error-content > .error-text {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .error-content > .error-actions {
+        animation: fadeInUp 0.8s ease-out;
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .error-decorative-card {
+        animation: fadeInUp 0.8s ease-out;
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+    }
+
+    .error-decorative-card:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+
+    .error-decorative-card:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    .error-decorative-card:nth-child(4) {
+        animation-delay: 0.5s;
+    }
+}
