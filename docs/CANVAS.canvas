@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"d78fac014a85d0f0","x":-203,"y":-290,"width":1003,"height":1250,"type":"link","url":"https://docs.google.com/document/d/19Y-S17-xPjDRIkwMfJSYHe3SFfQwWAcOekgxa9w2yTA/edit?tab=t.0"},
+		{"id":"61b5e46bb251b72c","x":1040,"y":-160,"width":250,"height":60,"type":"text","text":"Components"},
+		{"id":"2aeef631b53896b0","x":1620,"y":-420,"width":250,"height":60,"type":"text","text":"Histogram"},
+		{"id":"44b6e640ce860143","x":1127,"y":-487,"width":250,"height":60,"type":"text","text":"Slotbook Widgets"},
+		{"id":"bcfab1a1d0d86806","x":960,"y":-720,"width":250,"height":60,"type":"text","text":"Bookings display"},
+		{"id":"cd7ee569884c1d29","x":1290,"y":-720,"width":250,"height":60,"type":"text","text":""}
+	],
+	"edges":[
+		{"id":"d8061bc68780d34c","fromNode":"61b5e46bb251b72c","fromSide":"right","toNode":"2aeef631b53896b0","toSide":"left"},
+		{"id":"56ce03b61e3cb3b9","fromNode":"61b5e46bb251b72c","fromSide":"top","toNode":"44b6e640ce860143","toSide":"bottom"},
+		{"id":"9786e45e32fa6807","fromNode":"44b6e640ce860143","fromSide":"top","toNode":"bcfab1a1d0d86806","toSide":"bottom"}
+	]
+}
