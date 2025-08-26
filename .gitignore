@@ -1,1 +1,7 @@
+# Rust
 /target
+
+
+# Frontend
+node_modules
+web/out/**/*

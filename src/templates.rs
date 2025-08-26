@@ -7,7 +7,7 @@ pub static TEMPLATES: Lazy<AutoReloader> = Lazy::new(|| {
     AutoReloader::new(|notifier| {
         let mut env = Environment::new();
         // Указываем путь к директории с шаблонами
-        let template_path = "templates";
+        let template_path = "web/out";
         env.set_loader(path_loader(template_path));
         // Указываем notifier'у следить за этой директорией
         notifier.watch_path(template_path, true);
