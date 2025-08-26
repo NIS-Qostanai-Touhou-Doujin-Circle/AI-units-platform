@@ -1,6 +1,6 @@
 @layer base {
     body {
-        @apply bg-white dark:bg-gray-950;
+        @apply bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 font-sans;
     }
     h1 {
         @apply text-4xl font-bold;
