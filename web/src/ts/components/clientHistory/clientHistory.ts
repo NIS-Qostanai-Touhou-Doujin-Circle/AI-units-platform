@@ -9,12 +9,19 @@ export default function renderClientHistory(
 	$container.addClass("client-history");
 	history.forEach((action) => {
 		const $el = $(document.createElement("div"));
-		
+
 		$el.addClass("client-action");
 		
 		$el.append(icons[action.type]);
 		$el.append(
-			`<time datetime=${action.timestamp.toISOString()}>${action.timestamp.toLocaleString()}</time>`
+			`<time datetime=${action.timestamp.toISOString()}>${action.timestamp.toLocaleString('ru-RU', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric',
+			})}</time>`
 		);
 
 		if (action.type === "created") {

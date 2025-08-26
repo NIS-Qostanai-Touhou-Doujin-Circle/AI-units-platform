@@ -1,9 +1,9 @@
 .client-history {
-    @apply flex flex-col;
+    @apply flex flex-col rounded-lg overflow-hidden h-full;
 }
 
 .client-action {
-    @apply bg-gray-50 even:bg-blue-50;
+    @apply  even:bg-gray-50;
     @apply lg:grid grid-cols-[min-content_1fr_max-content] gap-2;
     @apply px-2 py-4;
 
