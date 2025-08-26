@@ -14,4 +14,7 @@
             @apply bg-blue-600 hover:bg-blue-700;
         }
     }
+    canvas {
+        @apply max-w-[400px] w-full max-h-[300px];
+    }
 }
