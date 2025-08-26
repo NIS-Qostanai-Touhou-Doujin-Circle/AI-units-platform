@@ -1,5 +1,7 @@
 import Chart from "chart.js/auto";
 import colors from "tailwindcss/colors";
+import $ from 'jquery';
+import { Chat, getExampleChatArgs } from "./components/chat/chat";
 
 export function pieChart() {
 	const canvas = document.getElementById('pie-chart') as HTMLCanvasElement;
@@ -15,13 +17,14 @@ export function pieChart() {
 					display: true,
 				},
 			},
+			rotation: 5,
 		},
 		data: {
 			labels: ["Hello", "World!"],
 			datasets: [
 				{
-					data: [5, 6],
-					backgroundColor: [colors.red[500], colors.blue[500]],
+					data: [98, 2],
+					backgroundColor: [colors.red[500], colors.green[500]],
 				},
 			],
 		},
@@ -51,7 +54,7 @@ function barChart() {
 			datasets: [
 				{
 					data: [5, 6],
-					backgroundColor: [colors.red[500], colors.blue[500]],
+					backgroundColor: [colors.orange[500], colors.blue[500]],
 				},
 			],
 		},
@@ -81,7 +84,7 @@ function lineChart() {
 			datasets: [
 				{
 					data: [5, 8, 6],
-					backgroundColor: [colors.red[500], colors.green[500], colors.blue[500]],
+					backgroundColor: [colors.orange[500], colors.green[500], colors.blue[500]],
 				},
 			],
 		},
@@ -91,4 +94,5 @@ function lineChart() {
 pieChart();
 barChart();
 lineChart();
-document.getElementById("money")!.textContent = new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT' }).format(1337);
+$("#money").text(new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT' }).format(1337));
+new Chat($("#chat")[0], getExampleChatArgs());

@@ -1,0 +1,20 @@
+.chat {
+    @apply bg-blue-200 p-2;
+}
+.chat-message {
+    @apply p-2 my-1 rounded-lg w-fit min-w-[40%];
+    @apply wrap-break-word;
+    blockquote {
+        @apply border-l-4 border-gray-400 pl-2 bg-gray-100 rounded-r-lg;
+    }
+}
+.chat-message-me {
+    @apply ml-auto bg-blue-500 text-white;
+
+    &.chat-message-sending {
+        @apply bg-gray-600;
+    }
+}
+.chat-message-them {
+    @apply bg-white text-black;
+}
