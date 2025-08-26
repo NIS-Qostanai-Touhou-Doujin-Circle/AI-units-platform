@@ -23,6 +23,8 @@
 		"build:assets": "cpx \"web/src/static/assets/**/*\" web/out/static/assets",
 		"watch:assets": "cpx \"web/src/static/assets/**/*\" web/out/static/assets --watch --verbose",
 		"build": "npm run build:html && npm run build:ts && npm run build:postcss && npm run build:assets",
-		"dev": "concurrently -k -n html,ts,css,assets \"npm:watch:html\" \"npm:watch:ts\" \"npm:watch:postcss\" \"npm:watch:assets\""
+		"watch:frontend": "concurrently -k -n html,ts,css,assets \"npm:watch:html\" \"npm:watch:ts\" \"npm:watch:postcss\" \"npm:watch:assets\"",
+		"serve": "cargo run",
+		"start": "concurrently -k -n frontend,server \"npm:watch:frontend\" \"npm:serve\""
 	}
 }
