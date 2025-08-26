@@ -1,24 +1,24 @@
 @font-face {
     font-family: 'Liberation Sans';
-    src: url('/static/fonts/LiberationSans-Regular.ttf') format('truetype');
+    src: url('/static/assets/fonts/LiberationSans-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'Liberation Sans';
-    src: url('/static/fonts/LiberationSans-Bold.ttf') format('truetype');
+    src: url('/static/assets/fonts/LiberationSans-Bold.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
 @font-face {
     font-family: 'Liberation Sans';
-    src: url('/static/fonts/LiberationSans-Italic.ttf') format('truetype');
+    src: url('/static/assets/fonts/LiberationSans-Italic.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
 }
 @font-face {
     font-family: 'Liberation Sans';
-    src: url('/static/fonts/LiberationSans-BoldItalic.ttf') format('truetype');
+    src: url('/static/assets/fonts/LiberationSans-BoldItalic.ttf') format('truetype');
     font-weight: bold;
     font-style: italic;
 }
