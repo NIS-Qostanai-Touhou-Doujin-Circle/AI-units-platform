@@ -21,6 +21,12 @@
         &.primary {
             @apply bg-blue-500 hover:bg-blue-600;
         }
+        &.icon {
+            @apply p-0;
+            > * {
+                @apply m-2;
+            }
+        }
     }
     canvas {
         @apply max-w-[400px] w-full max-h-[300px] h-full;

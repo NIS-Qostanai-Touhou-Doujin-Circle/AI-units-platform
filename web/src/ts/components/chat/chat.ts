@@ -1,181 +1,85 @@
-export interface ChatMessage {
-	id: string;
-	content: ChatMessageComponent[];
-    side: 'me' | 'them';
-    wasEdited: boolean;
-    doneSending?: boolean;
-	timestamp: Date;
-}
-
-export interface ChatMessageComponent {
-    type: 'text' | 'reply' | 'image';
-    /**
-     * Represents the text for `text` and `reply` types.
-     * Represents the url to the image for `image` type.
-     */
-    content: string;
-}
-
-export interface ChatParticipant {
-    id: string;
-    name: string;
-    avatarUrl: string;
-}
-
-export interface ChatParams {
-    messages: ChatMessage[];
-    me: ChatParticipant;
-    them: ChatParticipant;
-    /**
-     * If undefined, assumes no input capability
-     */
-    inputParams? : InputParams,
-    source: 'whatsapp' | 'telegram' | 'instagram';
-}
-
-export interface InputParams {
-    sendMessage: (message: string) => Promise<boolean>;
-}
+import $ from "jquery";
+import { ChatMessage, ChatMessageComponent, ChatParams } from "./types";
+import { createMessageElement } from "./message";
+import { createInput } from "./input";
 
 export class Chat {
-    params: ChatParams;
-    element: HTMLElement;
+	params: ChatParams;
+	element: HTMLElement;
 
-    constructor(element: HTMLElement, args: ChatParams) {
-        this.params = {...args};
-        this.element = element;
+	constructor(element: HTMLElement, args: ChatParams) {
+		this.params = { ...args };
+		this.element = element;
 
-        this.render();
-    }
+		this.render();
+	}
 
-    render() {
-        if (!this.element) return;
+	render() {
+		if (!this.element) return;
 
-        this.element.classList = 'chat';
-        this.element.innerHTML = '';
-        this.params.messages.forEach(message => {
-            this.element.appendChild(this._createMessageElement(message));
-        });
+		const el = $(this.element);
 
-        if (this.params.inputParams) {
-            this.element.appendChild(this._createInput());
-        }
-    }
+		el.addClass("chat");
+		el.empty();
+		el.append('<div class="chat-messages"></div>');
 
-    _createMessageElement(message: ChatMessage) {
-        const msgEl = document.createElement('div');
-        msgEl.classList.add('chat-message');
-        msgEl.classList.add(`chat-message-${message.side}`);
-        if (message.doneSending === false) msgEl.classList.add('chat-message-sending');
-        msgEl.dataset.messageId = message.id;
-        msgEl.innerHTML = `
-            <div class="chat-message-content">
-                ${message.content.map(comp => {
-                    if (comp.type === 'text') {
-                        return `<p>${comp.content}</p>`;
-                    } else if (comp.type === 'reply') {
-                        return `<blockquote>${comp.content}</blockquote>`;
-                    } else if (comp.type === 'image') {
-                        return `<img src="${comp.content}" alt="Image" />`;
-                    }
-                }).join('')}
-            </div>
-        `;
-        return msgEl;
-    }
+		this.params.messages.forEach((message) => {
+			el.find(".chat-messages").append(
+				createMessageElement(this.params, message)
+			);
+		});
 
-    _createInput() {
-        if (!this.params.inputParams) throw new Error('Input parameters are not defined');
+		if (this.params.inputParams) {
+			el.append(
+				createInput(
+					this.element,
+					this.params,
+					(message) => this.addMessage(message),
+					(id) => this.doneSending(id)
+				)
+			);
+		}
+	}
 
-        const inputElement = document.createElement('div');
-        inputElement.classList.add('chat-input');
-        inputElement.innerHTML = /*html*/`
-            <textarea placeholder="Type a message..."></textarea>
-            <button class='primary send'>Send</button>
-        `;
-        $(inputElement).find('button.send').on('click', async () => {
-            const message = $(inputElement).find('textarea').val();
-            if (!message || message?.trim() == '') return;
-            this.addMessage({
-                id: Date.now().toString(),
-                content: [{
-                    type: 'text',
-                    content: message
-                }],
-                side: 'me',
-                wasEdited: false,
-                timestamp: new Date()
-            })
-            if (message && this.params.inputParams) {
-                const success = await this.params.inputParams.sendMessage(message);
-                if (success) {
-                    $(inputElement).find('textarea').val('');
-                }
-            }
-        });
-        return inputElement;
-    }
+	getMessageEl(messageId: string): HTMLElement | null {
+		return (
+			$(this.element).find(`[data-message-id="${messageId}"]`).get(0) ||
+			null
+		);
+	}
 
-    addMessage(message: ChatMessage) {
-        this.params.messages.push(message);
-        this.element.appendChild(this._createMessageElement(message));
-    }
+	addMessage(message: ChatMessage): {
+		message: ChatMessage;
+		element: HTMLElement;
+	} {
+		this.params.messages.push(message);
+		const el = createMessageElement(this.params, message);
+		$(this.element).find(".chat-message").last().after(el);
+		return { message, element: el };
+	}
 
-    editMessage(messageId: string, newContent: ChatMessageComponent[]) {
-        const message = this.params.messages.find(m => m.id === messageId);
-        if (message) {
-            message.content = newContent;
-            message.wasEdited = true;
-            $(this.element).find(`[data-message-id="${messageId}"]`).replaceWith(this._createMessageElement(message));
-        }
-    }
+	doneSending(messageId: string) {
+		const message = this.params.messages.find((m) => m.id === messageId);
+		if (message) {
+			message.doneSending = true;
+			$(this.element)
+				.find(`[data-message-id="${messageId}"]`)
+				.removeClass("chat-message-sending");
+		} else {
+			console.warn(`Message with id ${messageId} not found`);
+		}
+	}
 
+	editMessage(messageId: string, newContent: ChatMessageComponent[]) {
+		const message = this.params.messages.find((m) => m.id === messageId);
+		if (message) {
+			message.content = newContent;
+			message.wasEdited = true;
+			$(this.element)
+				.find(`[data-message-id="${messageId}"]`)
+				.replaceWith(createMessageElement(this.params, message));
+		}
+	}
 }
 
-export function getExampleChatArgs() : ChatParams {
-    return {
-        messages: [{
-            id: '1',
-            content: [{
-                type: 'text',
-                content: 'Hello!'
-            }],
-            side: 'me',
-            wasEdited: false,
-            timestamp: new Date(new Date().getTime() - 120000)
-        }, {
-            id: '2',
-            content: [{
-                type: 'reply',
-                content: 'Hello!'
-            },{
-                type: 'text',
-                content: 'Hi there!'
-            }],
-            side: 'them',
-            wasEdited: true,
-            timestamp: new Date()
-        }],
-        me: {
-            id: '1',
-            name: 'You',
-            avatarUrl: 'https://example.com/your-avatar.png'
-        },
-        them: {
-            id: '2',
-            name: 'Friend',
-            avatarUrl: 'https://example.com/friend-avatar.png'
-        },
-        source: 'whatsapp',
-        inputParams: {
-            sendMessage(message) {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        console.log(`Message sent: ${message}`);
-                        resolve(true);
-                    }, 1000);
-                });
-            },
-        }
-    };
-}
+export { getExampleChatArgs } from "./example";
