@@ -6,12 +6,17 @@ export default function renderClientHistory(
 	history: ClientAction<keyof ClientActionMap>[]
 ) {
 	const $container = $(container);
-    $container.addClass("client-history");
+	$container.addClass("client-history");
 	history.forEach((action) => {
 		const $el = $(document.createElement("div"));
+		
 		$el.addClass("client-action");
-		console.log(icons[action.type]);
+		
 		$el.append(icons[action.type]);
+		$el.append(
+			`<time datetime=${action.timestamp.toISOString()}>${action.timestamp.toLocaleString()}</time>`
+		);
+
 		if (action.type === "created") {
 			$el.append(`<p>Клиент добавлен</p>`);
 		} else if (action.type === "deleted") {
@@ -31,7 +36,6 @@ export default function renderClientHistory(
 				`<p>Проведен созвон <span>#${meetingAction.payload.meetingId}</span></p>`
 			);
 		}
-        $el.append(`<time datetime=${action.timestamp.toISOString()}>${action.timestamp.toLocaleString()}</time>`);
 		$container.append($el);
 	});
 }

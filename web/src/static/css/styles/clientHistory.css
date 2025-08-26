@@ -4,14 +4,19 @@
 
 .client-action {
     @apply bg-gray-50 even:bg-blue-50;
-    @apply grid grid-cols-[min-content_1fr_max-content] gap-2;
+    @apply lg:grid grid-cols-[min-content_1fr_max-content] gap-2;
     @apply px-2 py-4;
+
+    p {
+        @apply row-start-1 col-start-2;
+    }
 
     span {
         @apply text-gray-500;
     }
 
     time {
-        @apply self-end;
+        @apply text-gray-500 hover:text-gray-800 transition-colors duration-100;
+        @apply col-start-3;
     }
 }
