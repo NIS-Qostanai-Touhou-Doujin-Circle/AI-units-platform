@@ -1,7 +1,10 @@
 @layer base {
+    * {
+        font-family: 'Liberation Sans', sans-serif;
+    }
     body {
         @apply bg-gray-100 dark:bg-gray-950 text-gray-950 dark:text-gray-50;
-        @apply min-h-screen font-sans;
+        @apply min-h-screen w-screen;
     }
     h1 {
         @apply text-4xl font-bold;
@@ -22,8 +25,5 @@
     canvas {
         @apply max-w-[400px] w-full max-h-[300px] h-full;
     }
-    .card {
-        @apply bg-white border border-gray-300 rounded-lg p-4 shadow-lg shadow-gray-200;
-        @apply dark:bg-gray-800 dark:border-gray-700 dark:shadow-none;
-    }
+    
 }

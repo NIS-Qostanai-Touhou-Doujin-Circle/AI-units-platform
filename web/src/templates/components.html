@@ -1,24 +1,48 @@
-{% extends "base.html" %}
-{% block content %}
-        <main class="w-fit min-h-screen bg-white border-x border-gray-300 mx-auto px-20 pt-10">
-            <main class="w-fit grid grid-cols-3 gap-4">
-                <div class="col-span-3 text-center">
-                    <h1>Components</h1>
-                    <p>This is the components page.</p>
-                </div>
-                <div class="card">
-                    <canvas id="pie-chart"></canvas>
-                </div>
-                <div class="card">
-                    <canvas id="bar-chart"></canvas>
-                    <canvas id="line-chart"></canvas>
-                </div>
-                <div class="card flex flex-col gap-2">
-                    <button class="">Normal</button>
-                    <button class="primary">Primary</button>
-                    <a class="button primary" href="#">Link as button</a>
-                </div>
-            </main>
-        </main>
-    <script src="/static/js/components.js" type="module"></script>
+{% extends "base.html" %} {% block content %}
+<main
+	class="lg:w-fit min-h-screen bg-white border-x border-gray-300 mx-auto px-4 lg:px-20 pt-10"
+>
+	<div class="grid grid-cols-12 gap-3 md:gap-4">
+		<div class="col-span-full text-center">
+			<h1>Components</h1>
+			<p>This is the components page.</p>
+		</div>
+		<div class="card col-span-12 sm:col-span-6 lg:col-span-4">
+			<div class="mx-auto w-fit"><canvas id="pie-chart"></canvas></div>
+		</div>
+		<div class="card col-span-12 sm:col-span-6 lg:col-span-4">
+			<div class="mx-auto w-fit">
+				<canvas id="bar-chart"></canvas>
+				<canvas id="line-chart"></canvas>
+			</div>
+		</div>
+		<div
+			class="card flex lg:flex-col gap-2 col-span-12 lg:col-span-4"
+		>
+			<button class="">Normal</button>
+			<button class="primary">Primary</button>
+			<a class="button primary" href="#">Link as button</a>
+		</div>
+        <div class="card data-card col-span-6 md:col-span-3">
+            <h3>Выручка</h3>
+            <data value="1337" id="money"></data>
+        </div>
+        <div class="card comparison-card col-span-12 md:col-span-6">
+            <div class="worse">
+                <h3>Сотрудники</h3>
+                <data value="30">30 мин</data>
+            </div>
+            <div class="better">
+                <h3>Talk Unit-ы</h3>
+                <data value="20">20 мин</data>
+            </div>  
+        </div>
+        <div class="card todo-card max-md:col-[7/13] max-md:grid-col max-md:row-start-5 md:col-span-3">
+            <label>
+                <input type="checkbox" />Сделать
+            </label>
+        </div>
+	</div>
+</main>
+<script src="/static/js/components.js" type="module"></script>
 {% endblock %}

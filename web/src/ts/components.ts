@@ -91,3 +91,4 @@ function lineChart() {
 pieChart();
 barChart();
 lineChart();
+document.getElementById("money")!.textContent = new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT' }).format(1337);
