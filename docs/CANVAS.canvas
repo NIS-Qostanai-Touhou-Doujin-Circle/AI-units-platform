@@ -5,7 +5,7 @@
 		{"id":"44b6e640ce860143","type":"text","text":"Slotbook Widgets","x":1127,"y":-487,"width":250,"height":60,"color":"1"},
 		{"id":"bcfab1a1d0d86806","type":"text","text":"Bookings display","x":960,"y":-720,"width":250,"height":60,"color":"1"},
 		{"id":"cd7ee569884c1d29","type":"text","text":"Admin panel","x":1290,"y":-720,"width":250,"height":60,"color":"1"},
-		{"id":"f4f0f7ce74686f84","type":"text","text":"History display\n(use case: complete client history)","x":1620,"y":120,"width":250,"height":60,"color":"3"},
+		{"id":"f4f0f7ce74686f84","type":"text","text":"History display\n(use case: complete client history)","x":1620,"y":120,"width":250,"height":95,"color":"3"},
 		{"id":"3108c82a8a69277d","type":"text","text":"Chat (w/ sending callback)","x":1620,"y":275,"width":250,"height":60,"color":"3"},
 		{"id":"2b3c60b6edf0ae6b","type":"text","text":"Kanban board","x":1120,"y":215,"width":250,"height":60,"color":"1"},
 		{"id":"c4a2b71167647710","type":"text","text":"Histogram","x":2037,"y":-685,"width":250,"height":60,"color":"3"},
