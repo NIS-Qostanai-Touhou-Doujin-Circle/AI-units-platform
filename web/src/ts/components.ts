@@ -2,6 +2,8 @@ import Chart from "chart.js/auto";
 import colors from "tailwindcss/colors";
 import $ from 'jquery';
 import { Chat, getExampleChatArgs } from "./components/chat/chat";
+import renderClientHistory from "./components/clientHistory/clientHistory";
+import getExampleClientHistory from "./components/clientHistory/example";
 
 export function pieChart() {
 	const canvas = document.getElementById('pie-chart') as HTMLCanvasElement;
@@ -96,3 +98,4 @@ barChart();
 lineChart();
 $("#money").text(new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT' }).format(1337));
 new Chat($("#chat")[0], getExampleChatArgs());
+renderClientHistory($("#client-history")[0], getExampleClientHistory());
