@@ -6,8 +6,8 @@ class ConfettiManager {
     private logoClickCount: number = 0;
     private readonly CLICK_THRESHOLD: number = 5;
     private readonly CONFETTI_COUNT: number = 30;
-    private readonly BASE_SCALE_MIN: number = 20; // Увеличено в 5 раз (было 1)
-    private readonly BASE_SCALE_MAX: number = 40; // Увеличено в 5 раз (было 5)
+    private readonly BASE_SCALE_MIN: number = 20;
+    private readonly BASE_SCALE_MAX: number = 40;
     private readonly ANIMATION_DURATION_MIN: number = 1;
     private readonly ANIMATION_DURATION_MAX: number = 2;
     private readonly STAGGER_DELAY: number = 50;
@@ -76,12 +76,6 @@ class ConfettiManager {
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new ConfettiManager();
-});
-
-// Also initialize immediately if DOM is already loaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         new ConfettiManager();
