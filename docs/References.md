@@ -8,3 +8,9 @@ Vapi
 
 Trello
 
+
+### Brandbook
+
+![[Aitomaton BrandGL.pdf]]
+
+![[brand-colors.jpg]]
