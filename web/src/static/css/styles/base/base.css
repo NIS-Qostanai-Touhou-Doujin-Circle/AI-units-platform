@@ -42,5 +42,8 @@
     canvas {
         @apply max-w-[400px] w-full max-h-[300px] h-full;
     }
+    main {
+        @apply lg:w-fit min-h-screen bg-white border-x border-gray-300 mx-auto px-4 lg:px-20 pt-10 pb-20;
+    }
     
 }

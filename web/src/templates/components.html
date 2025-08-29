@@ -1,7 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<main
-	class="lg:w-fit min-h-screen bg-white border-x border-gray-300 mx-auto px-4 lg:px-20 pt-10 pb-20"
->
+<main>
 	<div class="grid grid-cols-12 gap-3 md:gap-4">
 		<div class="col-span-full text-center">
 			<h1>Components</h1>
@@ -16,11 +14,11 @@
 				<canvas id="line-chart"></canvas>
 			</div>
 		</div>
-		<div
-			class="card data-card col-span-12 lg:col-span-4"
-		>
+		<div class="card data-card col-span-12 lg:col-span-4">
 			<h3>Кнопки</h3>
-			<div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 *:w-full gap-2">
+			<div
+				class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 *:w-full gap-2"
+			>
 				<button class="">Нормальная</button>
 				<button class="primary">Первичная</button>
 				<a class="button primary" href="#">Ссылка как кнопка</a>
@@ -29,33 +27,31 @@
 				<button class="success">Успех</button>
 			</div>
 		</div>
-        <div class="card data-card col-span-6 md:col-span-3">
-            <h3>Выручка</h3>
-            <data value="1337" id="money"></data>
-        </div>
-        <div class="card comparison-card col-span-12 md:col-span-6">
-            <div class="worse">
-                <h3>Сотрудники</h3>
-                <data value="30">30 мин</data>
-            </div>
-            <div class="better">
-                <h3>Talk Unit-ы</h3>
-                <data value="20">20 мин</data>
-            </div>  
-        </div>
-        <div class="card todo-card max-md:col-[7/13] max-md:grid-col max-md:row-start-5 md:col-span-3">
-            <label>
-                <input type="checkbox" />Сделать
-            </label>
-        </div>
-		<div class="card col-span-12 lg:col-span-6 h-[600px]">
-			<div id="chat">
+		<div class="card data-card col-span-6 md:col-span-3">
+			<h3>Выручка</h3>
+			<data value="1337" id="money"></data>
+		</div>
+		<div class="card comparison-card col-span-12 md:col-span-6">
+			<div class="worse">
+				<h3>Сотрудники</h3>
+				<data value="30">30 мин</data>
 			</div>
+			<div class="better">
+				<h3>Talk Unit-ы</h3>
+				<data value="20">20 мин</data>
+			</div>
+		</div>
+		<div
+			class="card todo-card max-md:col-[7/13] max-md:grid-col max-md:row-start-5 md:col-span-3"
+		>
+			<label> <input type="checkbox" />Сделать </label>
+		</div>
+		<div class="card col-span-12 lg:col-span-6 h-[600px]">
+			<div id="chat"></div>
 		</div>
 		<div class="card data-card col-span-12 lg:col-span-6">
 			<h3>Лог работы с клиентом</h3>
-			<div id="client-history">
-			</div>
+			<div id="client-history"></div>
 		</div>
 	</div>
 </main>
