@@ -29,9 +29,9 @@
                 }
             }
             .worse {
-                @apply bg-red-100;
+                @apply bg-brand-100;
                 data {
-                    @apply text-red-600;
+                    @apply text-brand-500;
                 }
             }
         }
