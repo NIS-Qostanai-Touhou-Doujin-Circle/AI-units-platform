@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %} {# Mobile header #}
+<header class="peer/header">
+	<label
+		><input
+			type="checkbox"
+			id="menu-toggle"
+			class="opacity-0 absolute size-0"
+		/>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="currentColor"
+			class="stroke-white h-full"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+			/>
+		</svg>
+	</label>
+    <h1>{{ title }}</h1>
+</header>
+{# Sidebar #}
+<aside>
+	<nav>
+		<ul>
+			<li><a href="/kanban">Kanban</a></li>
+			<li><a href="/components">Components</a></li>
+		</ul>
+	</nav>
+</aside>
+<div class="relative top-[var(--header-height)]">
+    {% block admin_content %}
+    <p>Placeholder</p>
+    {% endblock %} {% endblock %}
+</div>

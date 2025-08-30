@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+    --header-height: calc(16 * var(--spacing));
+}
+
+@layer components {
+
+    header {
+        @apply fixed bg-primary-500 h-[var(--header-height)] w-full z-20 px-[var(--header-height)];
+        @apply flex items-center;
+
+        label {
+            @apply p-3 box-border block;
+            @apply absolute top-0 left-0 h-full aspect-square;
+            @apply transition-transform duration-500 ease-in-out;
+            &:has(:checked) {
+                @apply -rotate-90;
+            }
+        }
+
+        h1 {
+            @apply text-xl text-white m-auto;
+        }
+    }
+
+    aside {
+        @apply fixed top-[var(--header-height)] w-[80%] max-w-96 min-h-screen z-10 bg-white;
+        @apply transition-[transform,translate,box-shadow] duration-500 ease-in-out;
+        @apply -translate-x-full;
+
+        nav {
+            li {
+                @apply block p-2 py-6 even:bg-gray-50;
+            }
+        }
+        
+        box-shadow: 0 0 0 10000px #00000000;
+        &:is(:where(.peer\/header):is(:has(:checked)) ~ *) {
+            @apply translate-x-0;
+            box-shadow: 0 0 0 10000px #00000066;
+        }
+    }
+}
