@@ -26,7 +26,7 @@ async fn main() -> std::io::Result<()> {
             .route("/reference", web::get().to(routes::reference))
             .default_service(web::route().to(routes::not_found))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
