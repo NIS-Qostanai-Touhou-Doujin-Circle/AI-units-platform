@@ -44,9 +44,10 @@ export function renderTaskAsKanban(task: Task) {
 			const subtaskItem = $(kanbanSubtaskTemplate!).clone().find("> div");
 			subtaskItem.find(".subtask-name").text(subtask.name);
 			subtaskItem.attr("data-id", subtask.id.toString());
-            const { start, end } = subtaskHandlers(subtaskItem);
+            const { start, end, click } = subtaskHandlers(subtaskItem);
 			subtaskItem.get(0)!.addEventListener("dragstart", start);
 			subtaskItem.get(0)!.addEventListener("dragend", end);
+			subtaskItem.get(0)!.addEventListener("click", click);
 			subtaskList.append(subtaskItem);
 		}
 		kanbanContainer.append(column);
@@ -56,6 +57,7 @@ export function renderTaskAsKanban(task: Task) {
 function subtaskHandlers(subtaskItem: JQuery<HTMLElement>): {
 	start: (event: DragEvent) => void;
 	end: (event: DragEvent) => void;
+	click: (event: MouseEvent) => void;
 } {
 	function start(event: DragEvent) {
 		if (!event.dataTransfer) return;
@@ -73,7 +75,12 @@ function subtaskHandlers(subtaskItem: JQuery<HTMLElement>): {
 	function end(event: DragEvent) {
 		subtaskItem.show();
 	}
-	return { start, end };
+	function click(event: MouseEvent) {
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		alert(`Clicked on subtask ${subtaskItem.attr("data-id")}`);
+	}
+	return { start, end, click };
 }
 
 /** Returns the index of the card that would be pushed out by the drop
