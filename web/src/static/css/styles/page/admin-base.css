@@ -6,7 +6,7 @@
 
 @layer components {
 	header {
-		@apply fixed bg-primary-500 h-[var(--header-height)] w-full z-20 px-[var(--header-height)];
+		@apply fixed bg-primary-500 h-[var(--header-height)] w-screen z-20 px-[var(--header-height)];
 		@apply flex items-center;
 		@apply shadow-sm;
 

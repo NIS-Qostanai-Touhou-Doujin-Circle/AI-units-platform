@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer components {
+    main {
+        @apply overflow-x-scroll;
+        
+        &:is(:where(.peer\/zoom):is(:has(:checked)) ~ *) {
+            @apply *:scale-50;
+        }
+
+        > * {
+            @apply scale-100 transition-transform duration-300 ease-in-out;
+            @apply origin-top-left;
+        }
+    }
+}
