@@ -31,5 +31,8 @@
 		"server:watch": "cargo watch -x run",
 		"start": "concurrently -k -n frontend,server \"npm:watch:frontend\" \"npm:server\"",
 		"start:dev": "concurrently -k -n frontend,server \"npm:watch:frontend\" \"npm:server:watch\""
+	},
+	"dependencies": {
+		"mobile-drag-drop": "^3.0.0-rc.0"
 	}
 }

@@ -1,6 +1,6 @@
 {% extends "admin-base.html" %} {% block admin_content %}
 <template id="kanban-column-template">
-	<div class="kanban-column card min-h-[400px] w-[300px] lg:w-[400px]">
+	<div class="kanban-column card grid grid-rows-[auto_1fr] min-h-[400px] w-[300px] lg:w-[400px]">
 		<h2 class="kanban-status-name w-max"></h2>
 		<div class="kanban-column-subtasks flex flex-col gap-2"></div>
 	</div>
