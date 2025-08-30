@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Units Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .sidebar-icon {
+            stroke-width: 1.5;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .kanban-column {
+            scroll-snap-align: start;
+        }
+        .kanban-container {
+            scroll-snap-type: x mandatory;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .tab-active {
+            border-color: #6366f1;
+            color: #4f46e5;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #64748b;
+        }
+        .kanban-card {
+            cursor: grab;
+        }
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+        .drag-over {
+            background-color: #e0e7ff;
+            border: 2px dashed #a5b4fc;
+        }
+        .dialpad-btn {
+            @apply bg-slate-200 hover:bg-slate-300 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-medium text-slate-700 transition-colors;
+        }
+        .calendar-event {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Main Container -->
+    <div id="app-container">
+
+        <!-- ======================================================= -->
+        <!-- Section 1: External Portal & Onboarding                 -->
+        <!-- ======================================================= -->
+
+        <!-- 1.1. Landing Page -->
+        <div id="page-landing" class="min-h-screen flex flex-col">
+            <header class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-20 border-b border-slate-200">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16">
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3v3m-3-3v3m-3-3v3M5 16h14M5 12h14m-7-8l-2 2-2-2m4 4V4"/>
+                            </svg>
+                            <span class="font-bold text-xl text-slate-800">AI Units</span>
+                        </div>
+                        <button onclick="showPage('page-login')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600">Войти</button>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow flex items-center justify-center pt-16">
+                <div class="text-center p-6">
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+                        Создайте <span class="text-indigo-600">виртуального сотрудника</span>
+                    </h1>
+                    <h2 class="mt-4 text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
+                        и получите CRM <span class="bg-indigo-600 text-white px-2 rounded-md">бесплатно</span>
+                    </h2>
+                    <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-600">
+                        Автоматизируйте первую линию поддержки, продаж и записи на услуги за 5 минут. Без программистов и сложных настроек.
+                    </p>
+                    <div class="mt-10">
+                        <button onclick="showPage('page-onboarding')" class="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 transform hover:-translate-y-0.5 transition-all duration-300">
+                            Создать виртуального сотрудника
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 1.2. Onboarding Flow -->
+        <div id="page-onboarding" class="hidden min-h-screen bg-slate-100 flex items-center justify-center p-4">
+            <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden" style="height: 700px;">
+                <!-- Left Panel: Status & Visualization -->
+                <div class="w-full md:w-1/3 bg-slate-50 p-6 border-r border-slate-200 flex flex-col">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3v3m-3-3v3m-3-3v3M5 16h14M5 12h14m-7-8l-2 2-2-2m4 4V4"/></svg>
+                        <span class="font-bold text-xl text-slate-800">Мастер создания</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div id="status-1" class="flex items-center space-x-3 opacity-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-indigo-600 font-bold">1</div>
+                            <span class="text-slate-600">Сбор информации</span>
+                        </div>
+                        <div id="status-2" class="flex items-center space-x-3 opacity-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-indigo-600 font-bold">2</div>
+                            <span class="text-slate-600">Настройка</span>
+                        </div>
+                        <div id="status-3" class="flex items-center space-x-3 opacity-50">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-indigo-600 font-bold">3</div>
+                            <span class="text-slate-600">Тестирование</span>
+                        </div>
+                    </div>
+                    <div class="mt-auto text-center">
+                         <button onclick="showPage('page-landing')" class="text-sm text-slate-500 hover:text-indigo-600">Отменить и вернуться</button>
+                    </div>
+                </div>
+                <!-- Right Panel: Chat & Interaction -->
+                <div id="onboarding-content" class="w-full md:w-2/3 flex flex-col p-4">
+                    <!-- This content will be replaced by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.3. Login Page -->
+        <div id="page-login" class="hidden min-h-screen bg-slate-100 flex items-center justify-center">
+            <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center space-x-2 mb-2">
+                        <svg class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3v3m-3-3v3m-3-3v3M5 16h14M5 12h14m-7-8l-2 2-2-2m4 4V4"/></svg>
+                        <span class="font-bold text-3xl text-slate-800">AI Units</span>
+                    </div>
+                    <h2 class="text-xl text-slate-600">Вход в рабочее пространство</h2>
+                </div>
+                <form onsubmit="event.preventDefault(); showPage('page-app');">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+                            <input type="email" id="email" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="you@example.com" required>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-slate-700">Пароль</label>
+                            <input type="password" id="password" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Войти
+                        </button>
+                    </div>
+                </form>
+                 <p class="mt-6 text-center text-sm text-slate-500">
+                    Нет аккаунта? <a href="#" onclick="showPage('page-landing')" class="font-medium text-indigo-600 hover:text-indigo-500">Создайте сотрудника бесплатно</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- Section 2: Internal Platform (Workspace)                -->
+        <!-- ======================================================= -->
+        <div id="page-app" class="hidden h-screen w-screen flex bg-slate-100">
+            <!-- Sidebar -->
+            <nav class="w-64 bg-white border-r border-slate-200 flex flex-col">
+                <div class="p-4 border-b border-slate-200 flex items-center space-x-2">
+                    <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3v3m-3-3v3m-3-3v3M5 16h14M5 12h14m-7-8l-2 2-2-2m4 4V4"/></svg>
+                    <span class="font-bold text-xl text-slate-800">AI Units</span>
+                </div>
+                <div class="flex-grow p-4 space-y-2 overflow-y-auto">
+                    <a href="#" onclick="showAppContent('content-dashboard')" class="app-menu-item bg-indigo-50 text-indigo-700 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="layout-dashboard" class="sidebar-icon"></i> <span>Главная</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-clients')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="users" class="sidebar-icon"></i> <span>Клиенты</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-dialogs')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="message-square" class="sidebar-icon"></i> <span>Диалоги</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-crmaton')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="kanban-square" class="sidebar-icon"></i> <span>CRMaton</span>
+                    </a>
+                     <a href="#" onclick="showAppContent('content-taskomaton')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="check-square" class="sidebar-icon"></i> <span>Taskomaton</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-telematon')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="phone" class="sidebar-icon"></i> <span>Telematon</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-slotomaton')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="calendar-days" class="sidebar-icon"></i> <span>Slotomaton</span>
+                    </a>
+                     <a href="#" onclick="showAppContent('content-qualomaton')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="shield-check" class="sidebar-icon"></i> <span>Qualomaton</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-analytics')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="bar-chart-3" class="sidebar-icon"></i> <span>Analytics</span>
+                    </a>
+                    <a href="#" onclick="showAppContent('content-employers')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="user-cog" class="sidebar-icon"></i> <span>Сотрудники</span>
+                    </a>
+                </div>
+                <div class="p-4 border-t border-slate-200">
+                    <a href="#" onclick="showAppContent('content-settings')" class="app-menu-item text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium">
+                        <i data-lucide="settings" class="sidebar-icon"></i> <span>Настройки</span>
+                    </a>
+                    <a href="#" onclick="showPage('page-landing')" class="text-slate-600 hover:bg-slate-100 flex items-center space-x-3 px-3 py-2 rounded-lg font-medium mt-2">
+                        <i data-lucide="log-out" class="sidebar-icon"></i> <span>Выход</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main id="app-main-content" class="flex-1 flex flex-col overflow-hidden">
+                <!-- Header -->
+                <div class="bg-white border-b border-slate-200 p-4 flex justify-between items-center flex-shrink-0">
+                    <h1 id="app-content-title" class="text-2xl font-bold text-slate-800">Главная</h1>
+                    <div class="flex items-center space-x-4">
+                        <button class="text-slate-500 hover:text-indigo-600"><i data-lucide="bell"></i></button>
+                        <div class="flex items-center space-x-2">
+                            <img src="https://placehold.co/32x32/E0E7FF/4F46E5?text=U" class="rounded-full" alt="User Avatar">
+                            <span class="text-sm font-medium">Пользователь</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Content Area -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <!-- App content will be injected here -->
+                    <div id="content-dashboard" class="app-content-view">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Main column -->
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-6 rounded-xl shadow-md">
+                                        <h3 class="font-semibold text-slate-800 mb-3">Ближайшие записи</h3>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center space-x-3"><span class="bg-indigo-500 text-white text-sm font-bold rounded-md px-2 py-1">10:00</span><div><p class="font-medium">Консультация с Иваном</p><p class="text-sm text-slate-500">Клиент: Иван Петров</p></div></div>
+                                            <div class="flex items-center space-x-3"><span class="bg-green-500 text-white text-sm font-bold rounded-md px-2 py-1">14:00</span><div><p class="font-medium">Звонок Анне</p><p class="text-sm text-slate-500">Сделка: Заявка с сайта #1204</p></div></div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-xl shadow-md">
+                                        <h3 class="font-semibold text-slate-800 mb-3">Мои задачи на сегодня</h3>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center"><input type="checkbox" class="rounded mr-2"><span>Разработать дизайн лендинга</span></div>
+                                            <div class="flex items-center"><input type="checkbox" class="rounded mr-2"><span>Написать ТЗ для разработчиков</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl shadow-md">
+                                    <h3 class="font-semibold text-slate-800 mb-3">Активность</h3>
+                                    <img src="https://placehold.co/800x300/ffffff/4f46e5?text=Activity+Chart" class="rounded-lg w-full" alt="Activity Chart">
+                                </div>
+                                <div class="bg-white p-6 rounded-xl shadow-md">
+                                    <h3 class="font-semibold text-slate-800 mb-3">Новые лиды в воронке</h3>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between items-center p-2 rounded-md hover:bg-slate-50"><p>Заявка с сайта #1204</p><span class="text-sm font-bold">150 000 ₽</span></div>
+                                        <div class="flex justify-between items-center p-2 rounded-md hover:bg-slate-50"><p>Обращение из Telegram</p><span class="text-sm font-bold">35 000 ₽</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Side column -->
+                            <div class="lg:col-span-1 space-y-6">
+                                <div class="bg-white p-6 rounded-xl shadow-md">
+                                    <h3 class="font-semibold text-slate-800 mb-4">Быстрые действия</h3>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button onclick="openCreateDealModal()" class="flex flex-col items-center justify-center p-4 bg-slate-100 hover:bg-indigo-100 rounded-lg text-slate-700 hover:text-indigo-700 transition-colors"><i data-lucide="kanban-square" class="mb-2"></i><span class="text-sm font-medium">Сделка</span></button>
+                                        <button onclick="openCreateTaskModal()" class="flex flex-col items-center justify-center p-4 bg-slate-100 hover:bg-indigo-100 rounded-lg text-slate-700 hover:text-indigo-700 transition-colors"><i data-lucide="check-square" class="mb-2"></i><span class="text-sm font-medium">Задача</span></button>
+                                        <button onclick="openCreateClientModal()" class="flex flex-col items-center justify-center p-4 bg-slate-100 hover:bg-indigo-100 rounded-lg text-slate-700 hover:text-indigo-700 transition-colors"><i data-lucide="user-plus" class="mb-2"></i><span class="text-sm font-medium">Клиент</span></button>
+                                        <button onclick="openCreateEventModal()" class="flex flex-col items-center justify-center p-4 bg-slate-100 hover:bg-indigo-100 rounded-lg text-slate-700 hover:text-indigo-700 transition-colors"><i data-lucide="calendar-plus" class="mb-2"></i><span class="text-sm font-medium">Запись</span></button>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl shadow-md">
+                                    <h3 class="font-semibold text-slate-800 mb-3">Последние диалоги</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3"><img src="https://placehold.co/32x32/E0E7FF/4F46E5?text=IP" class="rounded-full"><div><p class="font-medium">Иван Петров</p><p class="text-sm text-slate-500 truncate">Отлично, жду вашего звонка...</p></div></div>
+                                        <div class="flex items-center space-x-3"><img src="https://placehold.co/32x32/E0E7FF/4F46E5?text=АС" class="rounded-full"><div><p class="font-medium">Анна Сидорова</p><p class="text-sm text-slate-500 truncate">Здравствуйте! Подскажите...</p></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="content-crmaton" class="app-content-view hidden h-full">
+                        <div class="flex flex-col h-full">
+                            <div class="flex-shrink-0 mb-4 flex justify-between items-center">
+                                <h2 class="text-xl font-semibold">Воронка продаж</h2>
+                                <div class="flex space-x-2">
+                                    <button onclick="openCreateDealModal()" class="flex items-center space-x-2 bg-white border border-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-slate-50">
+                                        <i data-lucide="plus" class="h-5 w-5"></i>
+                                        <span>Новая сделка</span>
+                                    </button>
+                                    <button onclick="openAiDealModal()" class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">
+                                        <i data-lucide="sparkles" class="h-5 w-5"></i>
+                                        <span>Создать с AI</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="crm-kanban-board" class="flex-1 overflow-x-auto pb-4 kanban-container">
+                                <!-- Kanban board will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="content-clients" class="app-content-view">
+                        <!-- Client List View -->
+                        <div id="content-clients-list">
+                            <div class="bg-white p-6 rounded-xl shadow-md">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold">База клиентов</h2>
+                                    <button onclick="openCreateClientModal()" class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">
+                                        <i data-lucide="plus" class="h-5 w-5"></i>
+                                        <span>Добавить клиента</span>
+                                    </button>
+                                </div>
+                                <div id="client-list-table" class="overflow-x-auto">
+                                    <!-- Client table will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Client Detail View -->
+                        <div id="content-clients-detail" class="hidden">
+                           <!-- Client detail content will be rendered here -->
+                        </div>
+                    </div>
+                    
+                    <div id="content-dialogs" class="app-content-view hidden h-full">
+                         <div class="bg-white rounded-xl shadow-md h-full flex">
+                            <div class="w-1/3 border-r border-slate-200 flex flex-col"><div class="p-4 border-b border-slate-200"><input type="text" placeholder="Поиск диалогов..." class="w-full px-3 py-2 bg-slate-100 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></div><div class="flex-1 overflow-y-auto"><div class="p-4 border-b border-slate-200 bg-indigo-50 cursor-pointer"><p class="font-semibold">Иван Петров</p><p class="text-sm text-slate-500 truncate">Отлично, жду вашего звонка завтра...</p></div><div class="p-4 border-b border-slate-200 hover:bg-slate-50 cursor-pointer"><p class="font-semibold">Анна Сидорова</p><p class="text-sm text-slate-500 truncate">Здравствуйте! Подскажите, пожалуйста...</p></div></div></div>
+                            <div class="w-2/3 flex flex-col">
+                                <div class="p-4 border-b border-slate-200 flex items-center space-x-3"><img src="https://placehold.co/40x40/E0E7FF/4F46E5?text=IP" class="rounded-full"><h3 class="font-semibold text-lg">Иван Петров</h3></div>
+                                <div id="dialog-chat-area" class="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-4">
+                                    <div class="flex justify-start"><div class="bg-slate-200 p-3 rounded-lg max-w-xs">Здравствуйте!</div></div>
+                                    <div class="flex justify-end"><div class="bg-indigo-500 text-white p-3 rounded-lg max-w-xs">Добрый день!</div></div>
+                                    <div class="flex justify-start"><div class="bg-slate-200 p-3 rounded-lg max-w-xs">Отлично, жду вашего звонка завтра...</div></div>
+                                </div>
+                                <div class="p-4 border-t border-slate-200">
+                                    <div class="flex space-x-2">
+                                        <input id="dialog-input" type="text" placeholder="Напишите сообщение..." class="w-full px-3 py-2 bg-slate-100 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <button onclick="sendDialogMessage()" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700"><i data-lucide="send"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                    
+                    <div id="content-employers" class="app-content-view hidden">
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <h2 class="text-xl font-semibold">Управление сотрудниками</h2>
+                            <div class="border-b border-slate-200 mt-4">
+                                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                    <a href="#" onclick="switchEmployerTab(event, 'talk-units')" class="employer-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Talk Units</a>
+                                    <a href="#" onclick="switchEmployerTab(event, 'human')" class="employer-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Human</a>
+                                    <a href="#" onclick="switchEmployerTab(event, 'quality-units')" class="employer-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Quality Units</a>
+                                </nav>
+                            </div>
+                            
+                            <div id="employer-tab-content-human" class="mt-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-medium">Команда</h3>
+                                    <button onclick="openCreateEmployeeModal()" class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">
+                                        <i data-lucide="plus" class="h-5 w-5"></i>
+                                        <span>Добавить сотрудника</span>
+                                    </button>
+                                </div>
+                                <div id="human-employee-list" class="overflow-x-auto">
+                                    <!-- Employee list will be rendered here by JS -->
+                                </div>
+                            </div>
+
+                            <div id="employer-tab-content-talk-units" class="hidden mt-6">
+                                <h3 class="text-lg font-medium">Настройка Talk Unit "Менеджер Анна"</h3>
+                                <div class="mt-4 space-y-4">
+                                    <div><label class="block text-sm font-medium text-slate-700">Имя сотрудника</label><input type="text" value="Менеджер Анна" class="mt-1 block w-full md:w-1/2 px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm"></div>
+                                    <div><label class="block text-sm font-medium text-slate-700">Основной промпт (задача)</label><textarea rows="4" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm">Ты — дружелюбный и эффективный менеджер по продажам. Твоя задача — отвечать на вопросы клиентов о продуктах, помогать с выбором и записывать на консультацию.</textarea></div>
+                                    <div><label class="block text-sm font-medium text-slate-700">База знаний</label><textarea rows="6" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm">Наши продукты: ...\nЦены: ...\nЧасы работы: ...</textarea></div>
+                                    <button class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Сохранить изменения</button>
+                                </div>
+                            </div>
+                            <div id="employer-tab-content-quality-units" class="hidden mt-6 text-center text-slate-500">
+                                <p>Настройка Quality Units будет доступна здесь.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="content-slotomaton" class="app-content-view hidden h-full">
+                        <div class="bg-white p-6 rounded-xl shadow-md h-full flex flex-col">
+                            <div id="calendar-header" class="flex-shrink-0 flex items-center justify-between mb-4">
+                                <!-- Calendar header will be rendered here -->
+                            </div>
+                            <div id="calendar-grid" class="flex-1 overflow-y-auto">
+                                <!-- Calendar grid will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="content-qualomaton" class="app-content-view">
+                        <div id="qualomaton-list-view">
+                            <div class="bg-white p-6 rounded-xl shadow-md">
+                                <h2 class="text-xl font-semibold mb-4">Qualomaton: Сводка по точкам</h2>
+                                <div id="qualomaton-locations-list" class="space-y-4">
+                                    <!-- Locations list will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="qualomaton-detail-view" class="hidden">
+                            <!-- Location detail view will be rendered here -->
+                        </div>
+                    </div>
+
+                    <div id="content-analytics" class="app-content-view hidden">
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-semibold">Аналитика</h2>
+                                <div class="flex items-center space-x-2">
+                                     <div class="flex items-center space-x-1 bg-slate-200 p-1 rounded-lg">
+                                        <button class="px-3 py-1 text-sm font-semibold rounded-md bg-white shadow">Неделя</button>
+                                        <button class="px-3 py-1 text-sm font-semibold rounded-md">Месяц</button>
+                                        <button class="px-3 py-1 text-sm font-semibold rounded-md">Квартал</button>
+                                    </div>
+                                    <button class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-3 rounded-lg shadow-sm hover:bg-indigo-700">
+                                        <i data-lucide="file-plus-2" class="h-4 w-4"></i>
+                                        <span class="text-sm">Создать отчет</span>
+                                    </button>
+                                </div>
+                            </div>
+                             <div class="border-b border-slate-200 mt-4">
+                                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                    <a href="#" onclick="switchAnalyticsTab(event, 'summary')" class="analytics-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Сводка</a>
+                                    <a href="#" onclick="switchAnalyticsTab(event, 'deals')" class="analytics-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Сделки</a>
+                                    <a href="#" onclick="switchAnalyticsTab(event, 'employees')" class="analytics-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Сотрудники</a>
+                                    <a href="#" onclick="switchAnalyticsTab(event, 'tasks')" class="analytics-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Задачи</a>
+                                    <a href="#" onclick="switchAnalyticsTab(event, 'communications')" class="analytics-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Коммуникации</a>
+                                </nav>
+                            </div>
+                            <div id="analytics-content" class="mt-6">
+                                <!-- Analytics content will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="content-settings" class="app-content-view hidden">
+                        <div class="bg-white p-6 rounded-xl shadow-md">
+                             <h2 class="text-xl font-semibold">Настройки</h2>
+                            <div class="border-b border-slate-200 mt-4">
+                                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                    <a href="#" onclick="switchSettingsTab(event, 'integrations')" class="settings-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Интеграции</a>
+                                    <a href="#" onclick="switchSettingsTab(event, 'billing')" class="settings-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Биллинг</a>
+                                </nav>
+                            </div>
+                            
+                            <div id="settings-tab-content-integrations" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Integrations List -->
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="message-circle" class="text-green-500"></i><span>Соцсети и мессенджеры</span></div><button class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md">Подключить</button></div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="layout-template" class="text-blue-500"></i><span>Виджет на сайт</span></div><button class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md">Настроить</button></div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="calendar" class="text-sky-500"></i><span>Google Calendar</span></div><button class="px-3 py-1 text-sm bg-green-600 text-white rounded-md">Подключено</button></div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="contact" class="text-amber-500"></i><span>Google Contacts</span></div><button class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md">Подключить</button></div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="phone-forwarded" class="text-slate-500"></i><span>АТС</span></div><button class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md">Подключить</button></div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-between"><div class="flex items-center space-x-3"><i data-lucide="database" class="text-rose-500"></i><span>Внешние CRM/ERP</span></div><button class="px-3 py-1 text-sm bg-slate-200 text-slate-600 rounded-md cursor-not-allowed">Soon</button></div>
+                            </div>
+
+                            <div id="settings-tab-content-billing" class="mt-6">
+                                <div class="border-b border-slate-200">
+                                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                        <a href="#" onclick="switchBillingTab(event, 'plans')" class="billing-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Тарифы</a>
+                                        <a href="#" onclick="switchBillingTab(event, 'payment-methods')" class="billing-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Способы оплаты</a>
+                                        <a href="#" onclick="switchBillingTab(event, 'history')" class="billing-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">История списаний</a>
+                                    </nav>
+                                </div>
+                                <div id="billing-tab-content-plans" class="billing-tab-content mt-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div class="border rounded-lg p-6"><h3 class="font-bold text-lg">Старт</h3><p class="text-3xl font-extrabold my-2">5 000 ₽</p><button class="w-full py-2 rounded-lg border border-indigo-600 text-indigo-600 font-semibold">Сменить тариф</button></div>
+                                        <div class="border-2 border-indigo-600 rounded-lg p-6 relative"><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">Ваш тариф</span><h3 class="font-bold text-lg">Бизнес</h3><p class="text-3xl font-extrabold my-2">15 000 ₽</p><button class="w-full py-2 rounded-lg bg-indigo-600 text-white font-semibold" disabled>Текущий тариф</button></div>
+                                        <div class="border rounded-lg p-6"><h3 class="font-bold text-lg">Энтерпрайз</h3><p class="text-3xl font-extrabold my-2">50 000 ₽</p><button class="w-full py-2 rounded-lg border border-indigo-600 text-indigo-600 font-semibold">Сменить тариф</button></div>
+                                    </div>
+                                </div>
+                                <div id="billing-tab-content-payment-methods" class="billing-tab-content hidden mt-6">
+                                    <p>Здесь будут способы оплаты</p>
+                                </div>
+                                <div id="billing-tab-content-history" class="billing-tab-content hidden mt-6">
+                                    <p>Здесь будет история списаний</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="content-taskomaton" class="app-content-view hidden h-full">
+                        <div class="flex flex-col h-full">
+                            <div class="flex-shrink-0 mb-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <h2 class="text-xl font-semibold">Taskomaton:</h2>
+                                    <select id="project-selector" onchange="renderTaskBoard()" class="bg-white border border-slate-300 rounded-md py-2 px-3 text-sm font-medium">
+                                        <!-- Project options will be populated here -->
+                                    </select>
+                                </div>
+                                <button onclick="openCreateTaskModal()" class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">
+                                    <i data-lucide="plus" class="h-5 w-5"></i>
+                                    <span>Новая задача</span>
+                                </button>
+                            </div>
+                            <div id="task-kanban-board" class="flex-1 overflow-x-auto pb-4 kanban-container">
+                                <!-- Task board will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="content-telematon" class="app-content-view hidden">
+                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                                <h2 class="text-xl font-semibold mb-4">Журнал звонков</h2>
+                                <div id="call-log-table-container" class="overflow-x-auto">
+                                    <!-- Call log table will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
+                                <h2 class="text-xl font-semibold mb-4 text-center">Набор номера</h2>
+                                <div class="w-full max-w-xs mx-auto">
+                                    <div id="dialpad-display" class="bg-slate-100 rounded-md p-2 text-center text-2xl font-mono mb-4 h-12 flex items-center justify-center"></div>
+                                    <div id="dialpad-status" class="text-center text-green-600 font-medium mb-2 h-6"></div>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <button onclick="appendToDialer('1')" class="dialpad-btn">1</button>
+                                        <button onclick="appendToDialer('2')" class="dialpad-btn">2</button>
+                                        <button onclick="appendToDialer('3')" class="dialpad-btn">3</button>
+                                        <button onclick="appendToDialer('4')" class="dialpad-btn">4</button>
+                                        <button onclick="appendToDialer('5')" class="dialpad-btn">5</button>
+                                        <button onclick="appendToDialer('6')" class="dialpad-btn">6</button>
+                                        <button onclick="appendToDialer('7')" class="dialpad-btn">7</button>
+                                        <button onclick="appendToDialer('8')" class="dialpad-btn">8</button>
+                                        <button onclick="appendToDialer('9')" class="dialpad-btn">9</button>
+                                        <button onclick="appendToDialer('*')" class="dialpad-btn">*</button>
+                                        <button onclick="appendToDialer('0')" class="dialpad-btn">0</button>
+                                        <button onclick="appendToDialer('#')" class="dialpad-btn">#</button>
+                                    </div>
+                                    <div class="mt-4 flex items-center justify-center space-x-4">
+                                        <button onclick="initiateCall()" class="bg-green-500 hover:bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center">
+                                            <i data-lucide="phone"></i>
+                                        </button>
+                                         <button onclick="backspaceDialer()" class="text-slate-500 hover:text-slate-700 w-16 h-16 flex items-center justify-center">
+                                            <i data-lucide="delete"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+
+    </div>
+    
+    <!-- Modals -->
+    <div id="ai-deal-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Создание сделки с помощью AI</h2>
+            <p class="text-slate-600 mb-4">Опишите сделку в свободной форме. Например: "Новый клиент Иван из компании ТехноПром, хочет купить 10 лицензий, бюджет около 200 тысяч".</p>
+            <textarea id="ai-deal-input" rows="4" class="w-full p-2 border border-slate-300 rounded-md"></textarea>
+            <div id="ai-deal-loader" class="hidden my-4 flex justify-center"><div class="loader"></div></div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeAiDealModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                <button onclick="createDealWithAI()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Создать</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="create-deal-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Новая сделка</h2>
+            <form id="create-deal-form" onsubmit="event.preventDefault(); saveNewDeal();" class="space-y-4">
+                <div><label class="block text-sm font-medium">Название сделки*</label><input id="new-deal-name" type="text" class="mt-1 w-full p-2 border rounded-md" required></div>
+                <div><label class="block text-sm font-medium">Клиент*</label><select id="new-deal-client" class="mt-1 w-full p-2 border rounded-md bg-white" required></select></div>
+                <div><label class="block text-sm font-medium">Бюджет, ₽</label><input id="new-deal-budget" type="number" class="mt-1 w-full p-2 border rounded-md"></div>
+                <div><label class="block text-sm font-medium">Ответственный</label><select id="new-deal-responsible" class="mt-1 w-full p-2 border rounded-md bg-white"></select></div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeCreateDealModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Создать сделку</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="deal-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div id="deal-detail-modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
+            <!-- Deal detail content will be rendered here -->
+        </div>
+    </div>
+    
+    <div id="task-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div id="task-detail-modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
+            <!-- Task detail content will be rendered here -->
+        </div>
+    </div>
+
+    <div id="create-task-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Новая задача</h2>
+            <form id="create-task-form" onsubmit="event.preventDefault(); saveNewTask();" class="space-y-4">
+                <div><label class="block text-sm font-medium">Название задачи*</label><input id="new-task-name" type="text" class="mt-1 w-full p-2 border rounded-md" required></div>
+                <div><label class="block text-sm font-medium">Проект*</label><select id="new-task-project" class="mt-1 w-full p-2 border rounded-md bg-white" required></select></div>
+                <div><label class="block text-sm font-medium">Описание</label><textarea id="new-task-description" rows="3" class="mt-1 w-full p-2 border rounded-md"></textarea></div>
+                <div><label class="block text-sm font-medium">Ответственный</label><select id="new-task-responsible" class="mt-1 w-full p-2 border rounded-md bg-white"></select></div>
+                <div><label class="block text-sm font-medium">Срок выполнения</label><input id="new-task-duedate" type="date" class="mt-1 w-full p-2 border rounded-md"></div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeCreateTaskModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Создать задачу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="create-event-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4" id="event-modal-title">Новая запись</h2>
+            <form id="create-event-form" onsubmit="event.preventDefault(); saveNewEvent();" class="space-y-4">
+                <input type="hidden" id="event-id">
+                <div><label class="block text-sm font-medium">Название*</label><input id="event-title" type="text" class="mt-1 w-full p-2 border rounded-md" required></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium">Начало*</label><input id="event-start" type="datetime-local" class="mt-1 w-full p-2 border rounded-md" required></div>
+                    <div><label class="block text-sm font-medium">Окончание*</label><input id="event-end" type="datetime-local" class="mt-1 w-full p-2 border rounded-md" required></div>
+                </div>
+                <div><label class="block text-sm font-medium">Клиент</label><select id="event-client" class="mt-1 w-full p-2 border rounded-md bg-white"></select></div>
+                <div><label class="block text-sm font-medium">Сделка</label><select id="event-deal" class="mt-1 w-full p-2 border rounded-md bg-white"></select></div>
+                <div class="mt-6 flex justify-between">
+                    <button type="button" id="delete-event-btn" onclick="deleteEvent()" class="hidden px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">Удалить</button>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="closeCreateEventModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Сохранить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-employee-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Редактировать сотрудника</h2>
+            <input type="hidden" id="edit-employee-id">
+            <div class="space-y-4">
+                <div><label class="block text-sm font-medium">Имя</label><input id="edit-employee-name" type="text" class="mt-1 w-full p-2 border rounded-md"></div>
+                <div><label class="block text-sm font-medium">Роль</label><input id="edit-employee-role" type="text" class="mt-1 w-full p-2 border rounded-md"></div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeEditEmployeeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                <button onclick="saveEmployee()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-employee-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Добавить нового сотрудника</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium">Выберите кандидата</label>
+                    <select id="new-employee-candidate" class="mt-1 w-full p-2 border rounded-md">
+                        <option value="4">Елена Воробьева (Маркетолог)</option>
+                        <option value="5">Петр Николаев (Тех. поддержка)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeCreateEmployeeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                <button onclick="addEmployee()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="create-client-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Создать нового клиента</h2>
+            <form id="create-client-form" onsubmit="event.preventDefault(); saveNewClient();">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium">Имя*</label><input id="new-client-name" type="text" class="mt-1 w-full p-2 border rounded-md" required></div>
+                        <div><label class="block text-sm font-medium">Email*</label><input id="new-client-email" type="email" class="mt-1 w-full p-2 border rounded-md" required></div>
+                    </div>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium">Телефон</label><input id="new-client-phone" type="text" class="mt-1 w-full p-2 border rounded-md"></div>
+                        <div><label class="block text-sm font-medium">Компания</label><input id="new-client-company" type="text" class="mt-1 w-full p-2 border rounded-md"></div>
+                    </div>
+                    <div><label class="block text-sm font-medium">Должность</label><input id="new-client-position" type="text" class="mt-1 w-full p-2 border rounded-md"></div>
+                    <div>
+                        <label class="block text-sm font-medium">Ответственный</label>
+                        <select id="new-client-responsible" class="mt-1 w-full p-2 border rounded-md bg-white">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-medium">Теги</label><input id="new-client-tags" type="text" placeholder="VIP, Новый лид..." class="mt-1 w-full p-2 border rounded-md"></div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeCreateClientModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200">Отмена</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">Создать клиента</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        const pages = ['page-landing', 'page-onboarding', 'page-login', 'page-app'];
+        const appContentPages = ['content-dashboard', 'content-crmaton', 'content-clients', 'content-dialogs', 'content-employers', 'content-slotomaton', 'content-qualomaton', 'content-analytics', 'content-settings', 'content-taskomaton', 'content-telematon'];
+
+        // --- Data ---
+        let clients = [
+            { id: 1, name: 'Иван Петров', email: 'ivan@example.com', phone: '+7 (926) 123-45-67', status: 'Клиент', company: 'ООО "Ромашка"', position: 'Директор', responsibleId: 1, tags: ['VIP', 'Постоянный'] },
+            { id: 2, name: 'Анна Сидорова', email: 'anna@example.com', phone: '+7 (903) 987-65-43', status: 'Лид', company: '', position: '', responsibleId: 2, tags: ['Новый лид'] },
+        ];
+        let humanEmployees = [
+            { id: 1, name: 'Мария Иванова', role: 'Менеджер по продажам', email: 'm.ivanova@example.com', status: 'Active' },
+            { id: 2, name: 'Алексей Смирнов', role: 'Руководитель отдела', email: 'a.smirnov@example.com', status: 'Active' },
+            { id: 3, name: 'Дарья Кузнецова', role: 'Поддержка клиентов', email: 'd.kuznetsova@example.com', status: 'Inactive' },
+        ];
+        const candidates = [
+             { id: 4, name: 'Елена Воробьева', role: 'Маркетолог', email: 'e.vorobyova@example.com', status: 'Active' },
+             { id: 5, name: 'Петр Николаев', role: 'Тех. поддержка', email: 'p.nikolaev@example.com', status: 'Active' },
+        ];
+        const CRM_STAGES = ['Новый лид', 'Квалификация', 'Переговоры', 'Успех'];
+        let deals = [
+            { id: 1, title: 'Заявка с сайта #1204', budget: 150000, stage: 'Новый лид', clientId: 2, responsibleId: 1 },
+            { id: 2, title: 'Обращение из Telegram', budget: 35000, stage: 'Новый лид', clientId: 2, responsibleId: 1 },
+            { id: 3, title: 'Клиент "Ромашка"', budget: 500000, stage: 'Квалификация', clientId: 1, responsibleId: 2 },
+            { id: 4, title: 'Проект "Интеграция"', budget: 1200000, stage: 'Переговоры', clientId: 1, responsibleId: 2 },
+        ];
+        const PROJECTS = [ {id: 1, name: "Внутренний маркетинг"}, {id: 2, name: "Разработка сайта"}];
+        const TASK_STATUSES = ['To Do', 'In Progress', 'Done'];
+        let tasks = [
+            { id: 1, title: 'Разработать дизайн лендинга', status: 'In Progress', projectId: 2, assigneeIds: [1], dueDate: '2025-08-20', description: 'Нужно подготовить макеты в Figma', checklist: [{text: 'Собрать референсы', done: true}, {text: 'Создать прототип', done: false}], clientId: null },
+            { id: 2, title: 'Написать ТЗ для разработчиков', status: 'To Do', projectId: 2, assigneeIds: [2], dueDate: '2025-08-22', description: '', checklist: [], clientId: null },
+            { id: 3, title: 'Запустить рекламную кампанию', status: 'To Do', projectId: 1, assigneeIds: [1, 3], dueDate: '2025-08-25', description: 'Таргет на новую аудиторию', checklist: [], clientId: null },
+            { id: 4, title: 'Подготовить отчет для Ивана Петрова', status: 'Done', projectId: 1, assigneeIds: [1], dueDate: '2025-08-15', description: '', checklist: [], clientId: 1 },
+        ];
+        let callLog = [
+            {id: 1, time: '14:32', number: '+7...1234', duration: '02:45', status: 'Принят'},
+            {id: 2, time: '14:28', number: '+7...5678', duration: '00:00', status: 'Пропущен'},
+        ];
+        let events = [
+            { id: 1, title: 'Консультация с Иваном', start: new Date('2025-08-18T10:00:00'), end: new Date('2025-08-18T11:00:00'), clientId: 1, dealId: 3, color: 'indigo' },
+            { id: 2, title: 'Звонок Анне', start: new Date('2025-08-20T14:00:00'), end: new Date('2025-08-20T14:30:00'), clientId: 2, dealId: 1, color: 'green' },
+            { id: 3, title: 'Внутреннее совещание', start: new Date('2025-08-19T09:00:00'), end: new Date('2025-08-19T10:30:00'), clientId: null, dealId: null, color: 'amber' },
+            { id: 4, title: 'Планирование спринта', start: new Date('2025-08-18T15:00:00'), end: new Date('2025-08-18T16:30:00'), clientId: null, dealId: null, color: 'amber' },
+            { id: 5, title: 'Демо для ООО "Ромашка"', start: new Date('2025-08-22T11:00:00'), end: new Date('2025-08-22T12:00:00'), clientId: 1, dealId: 4, color: 'indigo' },
+        ];
+        const locations = [
+            { id: 1, name: 'Касса #1 (ТЦ "Мега")' },
+            { id: 2, name: 'Касса #2 (ул. Ленина, 5)' },
+        ];
+        const locationMetrics = {
+            1: { quality: 4.8, conflicts: 2, satisfaction: 95 },
+            2: { quality: 3.9, conflicts: 8, satisfaction: 78 },
+        };
+        const incidents = [
+            { id: 1, locationId: 2, type: 'Конфликт', transcript: 'Клиент: "Почему такая большая очередь?!"...', analysis: 'Повышенная нагрузка, сотрудник не справился с возражением.' },
+            { id: 2, locationId: 2, type: 'Недовольство', transcript: 'Клиент: "Я жду уже 15 минут..."', analysis: 'Необходимо оптимизировать процесс на кассе.' },
+            { id: 3, locationId: 1, type: 'Похвала', transcript: 'Клиент: "Девушка очень быстро и вежливо обслужила!"', analysis: 'Положительный пример работы сотрудника.' },
+        ];
+
+        // --- Gemini API Simulation ---
+        async function callGeminiAPI(prompt, context = '') {
+            console.log(`--- Calling Gemini API ---`);
+            console.log(`Prompt: ${prompt}`);
+            console.log(`Context: ${context}`);
+            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+            let response = "Извините, я не совсем понял ваш вопрос. Могли бы вы переформулировать?";
+            if (prompt.toLowerCase().includes('привет') || prompt.toLowerCase().includes('здравствуйте')) { response = "Добрый день! Чем я могу вам помочь?"; } 
+            else if (prompt.toLowerCase().includes('цена') || prompt.toLowerCase().includes('сколько стоит')) { response = "Стоимость нашего основного продукта составляет 10,000 ₽ в месяц. У нас также есть расширенные тарифы. Хотите узнать подробнее?"; } 
+            else if (prompt.toLowerCase().includes('часы работы') || prompt.toLowerCase().includes('работаете')) { response = "Мы работаем с 9:00 до 18:00 по московскому времени с понедельника по пятницу."; } 
+            else if (context === 'deal_creation') { response = JSON.stringify({ dealName: "Сделка с ТехноПром", clientName: "Иван", budget: "200000" }); } 
+            else if (context === 'quality_analysis') { response = `<h4 class="font-semibold">Результаты анализа:</h4><ul class="list-disc list-inside mt-2 text-sm space-y-1"><li><b>Вежливость:</b> 5/5. Менеджер поздоровался и был вежлив.</li><li><b>Решение проблемы:</b> 3/5. Ответ был дан, но можно было предложить альтернативы или задать уточняющие вопросы.</li><li><b>Рекомендация:</b> Предложить клиенту не только цену, но и сразу рассказать о преимуществах или предложить созвониться для детальной консультации.</li></ul>`; }
+            console.log(`Response: ${response}`);
+            return response;
+        }
+
+        function showPage(pageId) {
+            pages.forEach(id => document.getElementById(id).classList.toggle('hidden', id !== pageId));
+            if (pageId === 'page-onboarding') startOnboarding();
+            if (pageId === 'page-app') {
+                showAppContent('content-dashboard');
+                lucide.createIcons();
+            }
+        }
+
+        function showAppContent(contentId) {
+            const titles = {
+                'content-dashboard': 'Главная', 'content-crmaton': 'CRMaton', 'content-clients': 'Клиенты',
+                'content-dialogs': 'Диалоги', 'content-employers': 'Сотрудники', 'content-slotomaton': 'Slotomaton',
+                'content-qualomaton': 'Qualomaton', 'content-analytics': 'Аналитика', 'content-settings': 'Настройки',
+                'content-taskomaton': 'Taskomaton', 'content-telematon': 'Telematon'
+            };
+            document.getElementById('app-content-title').innerText = titles[contentId] || 'Главная';
+            appContentPages.forEach(id => document.getElementById(id).classList.toggle('hidden', id !== contentId));
+            document.querySelectorAll('.app-menu-item').forEach(item => {
+                const isActive = item.getAttribute('onclick') === `showAppContent('${contentId}')`;
+                item.classList.toggle('bg-indigo-50', isActive);
+                item.classList.toggle('text-indigo-700', isActive);
+                item.classList.toggle('text-slate-600', !isActive);
+                item.classList.toggle('hover:bg-slate-100', !isActive);
+            });
+            if(contentId === 'content-employers') renderEmployeeList();
+            if(contentId === 'content-clients') showClientList();
+            if(contentId === 'content-crmaton') renderDealBoard();
+            if(contentId === 'content-telematon') renderCallLog();
+            if(contentId === 'content-slotomaton') initCalendar();
+            if(contentId === 'content-qualomaton') renderQualomatonList();
+            if(contentId === 'content-analytics') switchAnalyticsTab(null, 'summary');
+            if(contentId === 'content-settings') switchSettingsTab(null, 'billing');
+            if(contentId === 'content-taskomaton') {
+                const projectSelector = document.getElementById('project-selector');
+                projectSelector.innerHTML = PROJECTS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                renderTaskBoard();
+            }
+        }
+
+        // --- Clients Logic ---
+        function renderClientList() {
+            const tableContainer = document.getElementById('client-list-table');
+            tableContainer.innerHTML = `
+                <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr>
+                        <th class="px-6 py-3">Имя</th><th class="px-6 py-3">Контакты</th><th class="px-6 py-3">Компания</th><th class="px-6 py-3">Теги</th><th class="px-6 py-3">Статус</th>
+                    </tr></thead>
+                    <tbody>
+                        ${clients.map(client => `
+                        <tr class="bg-white border-b hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">
+                                <a href="#" onclick="event.preventDefault(); showClientDetail(${client.id})" class="text-indigo-600 hover:underline">${client.name}</a>
+                            </td>
+                            <td class="px-6 py-4">${client.email}<br>${client.phone}</td>
+                            <td class="px-6 py-4">${client.company}</td>
+                            <td class="px-6 py-4">${(client.tags || []).map(tag => `<span class="bg-slate-200 text-slate-600 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}</td>
+                            <td class="px-6 py-4"><span class="${client.status === 'Клиент' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">${client.status}</span></td>
+                        </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function showClientList() {
+            document.getElementById('content-clients-list').classList.remove('hidden');
+            document.getElementById('content-clients-detail').classList.add('hidden');
+            renderClientList();
+        }
+
+        function showClientDetail(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('content-clients-list').classList.add('hidden');
+            const detailView = document.getElementById('content-clients-detail');
+            detailView.classList.remove('hidden');
+            const responsible = humanEmployees.find(e => e.id === client.responsibleId);
+            const clientTasks = tasks.filter(t => t.clientId === clientId);
+
+            detailView.innerHTML = `
+                <div>
+                    <div class="mb-4">
+                        <button onclick="showClientList()" class="flex items-center space-x-2 text-sm font-medium text-slate-600 hover:text-indigo-600">
+                            <i data-lucide="arrow-left"></i>
+                            <span>К списку клиентов</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md">
+                        <div class="p-6 border-b border-slate-200 flex items-start justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 font-bold text-2xl">${client.name.charAt(0)}</span>
+                                <div>
+                                    <h2 class="text-2xl font-bold">${client.name}</h2>
+                                    <p class="text-slate-500">${client.position || 'Должность не указана'}</p>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        ${(client.tags || []).map(tag => `<span class="bg-slate-200 text-slate-600 text-xs font-medium px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="w-2/3 p-6">
+                                <div class="border-b border-slate-200">
+                                    <nav class="-mb-px flex space-x-8" id="client-detail-tabs">
+                                        <a href="#" onclick="switchClientTab(event, 'overview')" class="client-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Обзор</a>
+                                        <a href="#" onclick="switchClientTab(event, 'deals')" class="client-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Сделки</a>
+                                        <a href="#" onclick="switchClientTab(event, 'tasks')" class="client-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Задачи</a>
+                                        <a href="#" onclick="switchClientTab(event, 'chat')" class="client-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Чат</a>
+                                    </nav>
+                                </div>
+                                <div id="client-tab-content-overview" class="client-tab-content mt-6 space-y-4">
+                                    <div class="flex items-start space-x-3"><i data-lucide="message-square" class="text-slate-400 mt-1"></i><div><p>Новое сообщение в чате</p><p class="text-sm text-slate-500">Вчера, 18:30</p></div></div>
+                                    <div class="flex items-start space-x-3"><i data-lucide="kanban-square" class="text-slate-400 mt-1"></i><div><p>Создана сделка "Проект Интеграция"</p><p class="text-sm text-slate-500">2 дня назад</p></div></div>
+                                    <div class="flex items-start space-x-3"><i data-lucide="phone" class="text-slate-400 mt-1"></i><div><p>Входящий звонок (02:45)</p><p class="text-sm text-slate-500">2 дня назад</p></div></div>
+                                    <div class="mt-4"><textarea class="w-full p-2 border rounded-md" placeholder="Добавить комментарий..."></textarea></div>
+                                </div>
+                                <div id="client-tab-content-deals" class="client-tab-content hidden mt-6"><p>Здесь будет список сделок из CRMaton.</p></div>
+                                <div id="client-tab-content-tasks" class="client-tab-content hidden mt-6 space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold text-md mb-2">Задачи по клиенту</h4>
+                                        <div class="space-y-2">
+                                            ${clientTasks.length > 0 ? clientTasks.map(task => `
+                                                <div class="flex items-center justify-between p-2 bg-slate-50 rounded-md">
+                                                    <span>${task.title}</span>
+                                                    <span class="text-xs text-slate-500">${task.status}</span>
+                                                </div>
+                                            `).join('') : '<p class="text-sm text-slate-500">Задач по этому клиенту нет.</p>'}
+                                        </div>
+                                    </div>
+                                    <div class="border-t pt-4">
+                                        <h4 class="font-semibold text-md mb-2">Новая задача для ${client.name}</h4>
+                                        <div class="space-y-3 p-3 bg-slate-50 rounded-lg border">
+                                            <input type="text" placeholder="Название задачи" class="w-full p-2 border rounded-md text-sm">
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <input type="date" class="w-full p-2 border rounded-md text-sm">
+                                                <select class="w-full p-2 border rounded-md bg-white text-sm">
+                                                    <option>Выбрать ответственного</option>
+                                                    ${humanEmployees.filter(e => e.status === 'Active').map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+                                                </select>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-slate-600"><i data-lucide="paperclip" class="h-4 w-4"></i><label for="client-task-file" class="hover:text-indigo-600 cursor-pointer">Прикрепить файл</label><input type="file" id="client-task-file" class="hidden"></div>
+                                            <button onclick="alert('Задача добавлена!')" class="w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-semibold">Добавить задачу</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="client-tab-content-chat" class="client-tab-content hidden mt-6 h-96 flex flex-col">
+                                    <div class="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-4 border rounded-t-lg">
+                                        <div class="flex justify-start"><div class="bg-slate-200 p-3 rounded-lg max-w-xs">Здравствуйте!</div></div>
+                                        <div class="flex justify-end"><div class="bg-indigo-500 text-white p-3 rounded-lg max-w-xs">Добрый день!</div></div>
+                                    </div>
+                                    <div class="p-2 border-t bg-white rounded-b-lg">
+                                        <div class="flex space-x-2"><input type="text" placeholder="Напишите сообщение..." class="w-full px-3 py-2 bg-slate-100 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"><button class="bg-indigo-600 text-white font-semibold py-2 px-3 rounded-lg hover:bg-indigo-700"><i data-lucide="send" class="h-4 w-4"></i></button></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-1/3 p-6 bg-slate-50 rounded-r-xl border-l border-slate-200">
+                                <h3 class="font-semibold mb-4">Информация</h3>
+                                <div class="space-y-4 text-sm">
+                                    <div>
+                                        <p class="text-slate-500">Email</p>
+                                        <p class="font-medium text-indigo-600">${client.email}</p>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="text-slate-500">Телефон</p>
+                                            <p class="font-medium">${client.phone}</p>
+                                        </div>
+                                        <button onclick="alert('Имитация звонка клиенту ${client.name}...')" class="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-indigo-600">
+                                            <i data-lucide="phone"></i>
+                                        </button>
+                                    </div>
+                                    <div><p class="text-slate-500">Компания</p><p class="font-medium">${client.company || 'Не указана'}</p></div>
+                                    <div><p class="text-slate-500">Ответственный</p><p class="font-medium">${responsible ? responsible.name : 'Не назначен'}</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+        
+        function switchClientTab(event, tabName) {
+            event.preventDefault();
+            document.querySelectorAll('.client-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            event.target.classList.add('tab-active');
+            event.target.classList.remove('tab-inactive');
+
+            document.querySelectorAll('.client-tab-content').forEach(content => {
+                content.classList.toggle('hidden', !content.id.endsWith(tabName));
+            });
+        }
+
+        const createClientModal = document.getElementById('create-client-modal');
+        function openCreateClientModal() { 
+            const responsibleSelect = document.getElementById('new-client-responsible');
+            responsibleSelect.innerHTML = humanEmployees
+                .filter(emp => emp.status === 'Active')
+                .map(emp => `<option value="${emp.id}">${emp.name}</option>`)
+                .join('');
+            createClientModal.classList.remove('hidden'); 
+        }
+        function closeCreateClientModal() { 
+            document.getElementById('create-client-form').reset();
+            createClientModal.classList.add('hidden'); 
+        }
+        function saveNewClient() {
+            const newClient = {
+                id: clients.length + 1,
+                name: document.getElementById('new-client-name').value,
+                email: document.getElementById('new-client-email').value,
+                phone: document.getElementById('new-client-phone').value,
+                company: document.getElementById('new-client-company').value,
+                position: document.getElementById('new-client-position').value,
+                responsibleId: parseInt(document.getElementById('new-client-responsible').value),
+                tags: document.getElementById('new-client-tags').value.split(',').map(tag => tag.trim()).filter(Boolean),
+                status: 'Лид'
+            };
+            clients.push(newClient);
+            renderClientList();
+            closeCreateClientModal();
+        }
+
+
+        // --- Dialogs Logic ---
+        async function sendDialogMessage() {
+            const input = document.getElementById('dialog-input');
+            const chatArea = document.getElementById('dialog-chat-area');
+            const text = input.value.trim();
+            if (!text) return;
+            const userMessage = document.createElement('div');
+            userMessage.className = 'flex justify-end';
+            userMessage.innerHTML = `<div class="bg-indigo-500 text-white p-3 rounded-lg max-w-xs">${text}</div>`;
+            chatArea.appendChild(userMessage);
+            input.value = '';
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'flex justify-start typing-indicator';
+            typingIndicator.innerHTML = `<div class="bg-slate-200 p-3 rounded-lg max-w-xs">Печатает...</div>`;
+            chatArea.appendChild(typingIndicator);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            const responseText = await callGeminiAPI(text, 'customer_support');
+            chatArea.removeChild(typingIndicator);
+            const botMessage = document.createElement('div');
+            botMessage.className = 'flex justify-start';
+            botMessage.innerHTML = `<div class="bg-slate-200 p-3 rounded-lg max-w-xs">${responseText}</div>`;
+            chatArea.appendChild(botMessage);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        document.getElementById('dialog-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendDialogMessage(); });
+
+        // --- Qualomaton Logic ---
+        function renderQualomatonList() {
+            document.getElementById('qualomaton-list-view').classList.remove('hidden');
+            document.getElementById('qualomaton-detail-view').classList.add('hidden');
+            const listContainer = document.getElementById('qualomaton-locations-list');
+            listContainer.innerHTML = locations.map(loc => {
+                const metrics = locationMetrics[loc.id];
+                return `
+                    <a href="#" onclick="event.preventDefault(); showQualomatonDetail(${loc.id})" class="block bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-semibold text-lg">${loc.name}</h3>
+                            <span class="text-sm font-medium text-indigo-600">Подробнее &rarr;</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-slate-500 text-sm">Качество</p>
+                                <p class="text-2xl font-bold ${metrics.quality > 4.5 ? 'text-green-600' : 'text-amber-600'}">${metrics.quality}/5.0</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm">Конфликты (неделя)</p>
+                                <p class="text-2xl font-bold ${metrics.conflicts < 5 ? 'text-green-600' : 'text-red-600'}">${metrics.conflicts}%</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm">Удовлетворенность</p>
+                                <p class="text-2xl font-bold ${metrics.satisfaction > 90 ? 'text-green-600' : 'text-amber-600'}">${metrics.satisfaction}%</p>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+        
+        function showQualomatonDetail(locationId) {
+            document.getElementById('qualomaton-list-view').classList.add('hidden');
+            const detailView = document.getElementById('qualomaton-detail-view');
+            detailView.classList.remove('hidden');
+            const location = locations.find(l => l.id === locationId);
+            const locationIncidents = incidents.filter(i => i.locationId === locationId);
+
+            detailView.innerHTML = `
+                <div class="mb-4">
+                    <button onclick="renderQualomatonList()" class="flex items-center space-x-2 text-sm font-medium text-slate-600 hover:text-indigo-600">
+                        <i data-lucide="arrow-left"></i>
+                        <span>К списку точек</span>
+                    </button>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold mb-4">Аналитика: ${location.name}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold mb-2">Управленческие инсайты от AI</h3>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li>Частые жалобы на долгое ожидание в пиковые часы (18:00-19:00).</li>
+                                <li>Сотрудник #2 (Мария) отлично справляется с продажей доп. услуг.</li>
+                                <li>Клиенты часто спрашивают про условия возврата товара.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Журнал инцидентов</h3>
+                            <div class="space-y-3">
+                                ${locationIncidents.map(inc => `
+                                    <div class="bg-slate-50 border p-3 rounded-md">
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-medium text-sm ${inc.type === 'Конфликт' ? 'text-red-600' : (inc.type === 'Похвала' ? 'text-green-600' : 'text-amber-600')}">${inc.type}</p>
+                                            <button onclick="playRecording(this, ${inc.id})" class="text-slate-500 hover:text-indigo-600"><i data-lucide="play-circle" class="h-5 w-5"></i></button>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1 italic">"${inc.transcript}"</p>
+                                        <p class="text-xs text-indigo-700 mt-2"><b>Анализ AI:</b> ${inc.analysis}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+             lucide.createIcons();
+        }
+
+
+        // --- CRMaton Logic ---
+        const aiDealModal = document.getElementById('ai-deal-modal');
+        function openAiDealModal() { aiDealModal.classList.remove('hidden'); }
+        function closeAiDealModal() { aiDealModal.classList.add('hidden'); }
+        
+        const createDealModal = document.getElementById('create-deal-modal');
+        function openCreateDealModal() {
+            document.getElementById('new-deal-client').innerHTML = clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            document.getElementById('new-deal-responsible').innerHTML = humanEmployees.filter(e => e.status === 'Active').map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+            createDealModal.classList.remove('hidden');
+        }
+        function closeCreateDealModal() { createDealModal.classList.add('hidden'); }
+        
+        function saveNewDeal() {
+            const newDeal = {
+                id: deals.length + 1,
+                title: document.getElementById('new-deal-name').value,
+                budget: parseInt(document.getElementById('new-deal-budget').value) || 0,
+                stage: 'Новый лид',
+                clientId: parseInt(document.getElementById('new-deal-client').value),
+                responsibleId: parseInt(document.getElementById('new-deal-responsible').value),
+            };
+            deals.push(newDeal);
+            renderDealBoard();
+            closeCreateDealModal();
+        }
+
+        async function createDealWithAI() {
+            const input = document.getElementById('ai-deal-input');
+            const loader = document.getElementById('ai-deal-loader');
+            const text = input.value.trim();
+            if(!text) return;
+            loader.classList.remove('hidden');
+            const prompt = `Извлеки из текста название сделки, имя клиента и бюджет. Верни JSON. Текст: "${text}"`;
+            try {
+                const response = await callGeminiAPI(prompt, 'deal_creation');
+                const dealData = JSON.parse(response);
+                alert(`Сделка создана!\nНазвание: ${dealData.dealName}\nКлиент: ${dealData.clientName}\nБюджет: ${dealData.budget} ₽`);
+                input.value = '';
+                closeAiDealModal();
+            } catch (error) { alert("Не удалось распознать данные. Попробуйте описать сделку подробнее."); } 
+            finally { loader.classList.add('hidden'); }
+        }
+        
+        const dealDetailModal = document.getElementById('deal-detail-modal');
+        function openDealDetailModal(dealId) {
+            const deal = deals.find(d => d.id === dealId);
+            const client = clients.find(c => c.id === deal.clientId);
+            const responsible = humanEmployees.find(e => e.id === deal.responsibleId);
+            const content = document.getElementById('deal-detail-modal-content');
+            content.innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-xl font-bold mb-4">${deal.title}</h2>
+                        <button onclick="closeDealDetailModal()"><i data-lucide="x"></i></button>
+                    </div>
+                    <p class="text-slate-600">Бюджет: ${deal.budget.toLocaleString('ru-RU')} ₽</p>
+                    <p class="text-slate-600">Клиент: ${client.name}</p>
+                    <p class="text-slate-600">Ответственный: ${responsible.name}</p>
+                    <div class="mt-4">
+                        <h3 class="font-semibold">История</h3>
+                        <p class="text-sm text-slate-500 mt-2">Здесь будет лента активности по сделке.</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+            dealDetailModal.classList.remove('hidden');
+        }
+        function closeDealDetailModal() { dealDetailModal.classList.add('hidden'); }
+
+        // --- Taskomaton Logic ---
+        const createTaskModal = document.getElementById('create-task-modal');
+        function openCreateTaskModal() {
+            document.getElementById('new-task-project').innerHTML = PROJECTS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            document.getElementById('new-task-responsible').innerHTML = humanEmployees.filter(e => e.status === 'Active').map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+            createTaskModal.classList.remove('hidden');
+        }
+        function closeCreateTaskModal() { createTaskModal.classList.add('hidden'); }
+
+        function saveNewTask() {
+            const newTask = {
+                id: tasks.length + 1,
+                title: document.getElementById('new-task-name').value,
+                description: document.getElementById('new-task-description').value,
+                status: 'To Do',
+                projectId: parseInt(document.getElementById('new-task-project').value),
+                assigneeIds: [parseInt(document.getElementById('new-task-responsible').value)],
+                dueDate: document.getElementById('new-task-duedate').value,
+                checklist: []
+            };
+            tasks.push(newTask);
+            renderTaskBoard();
+            closeCreateTaskModal();
+        }
+
+        const taskDetailModal = document.getElementById('task-detail-modal');
+        function openTaskDetailModal(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            const assignees = task.assigneeIds.map(id => humanEmployees.find(e => e.id === id).name).join(', ');
+            const content = document.getElementById('task-detail-modal-content');
+            content.innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-xl font-bold mb-2">${task.title}</h2>
+                        <button onclick="closeTaskDetailModal()"><i data-lucide="x"></i></button>
+                    </div>
+                    <p class="text-sm text-slate-500 mb-4">Срок: ${task.dueDate || 'Не установлен'}</p>
+                    <p class="text-slate-700 mb-4">${task.description || 'Нет описания.'}</p>
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-sm mb-2">Чек-лист</h3>
+                        ${task.checklist.map(item => `
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} class="rounded">
+                                <span class="${item.done ? 'line-through text-slate-500' : ''}">${item.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p class="text-sm text-slate-600">Ответственные: ${assignees}</p>
+                </div>
+            `;
+            lucide.createIcons();
+            taskDetailModal.classList.remove('hidden');
+        }
+        function closeTaskDetailModal() { taskDetailModal.classList.add('hidden'); }
+        
+        // --- Employers Logic ---
+        function switchEmployerTab(event, tabName) {
+            event.preventDefault();
+            document.querySelectorAll('.employer-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            event.target.classList.add('tab-active');
+            event.target.classList.remove('tab-inactive');
+
+            document.getElementById('employer-tab-content-talk-units').classList.toggle('hidden', tabName !== 'talk-units');
+            document.getElementById('employer-tab-content-human').classList.toggle('hidden', tabName !== 'human');
+            document.getElementById('employer-tab-content-quality-units').classList.toggle('hidden', tabName !== 'quality-units');
+        }
+        
+        function renderEmployeeList() {
+            const listContainer = document.getElementById('human-employee-list');
+            listContainer.innerHTML = `
+                <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr>
+                        <th class="px-6 py-3">Имя</th><th class="px-6 py-3">Роль</th><th class="px-6 py-3">Email</th><th class="px-6 py-3">Статус</th><th class="px-6 py-3">Действия</th>
+                    </tr></thead>
+                    <tbody>
+                        ${humanEmployees.map(emp => `
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4 font-medium text-slate-900">${emp.name}</td>
+                                <td class="px-6 py-4">${emp.role}</td>
+                                <td class="px-6 py-4">${emp.email}</td>
+                                <td class="px-6 py-4"><span class="${emp.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'} text-xs font-medium px-2.5 py-0.5 rounded-full">${emp.status}</span></td>
+                                <td class="px-6 py-4"><button onclick="openEditEmployeeModal(${emp.id})" class="text-indigo-600 hover:text-indigo-900">Редактировать</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        const editModal = document.getElementById('edit-employee-modal');
+        function openEditEmployeeModal(id) {
+            const employee = humanEmployees.find(e => e.id === id);
+            document.getElementById('edit-employee-id').value = employee.id;
+            document.getElementById('edit-employee-name').value = employee.name;
+            document.getElementById('edit-employee-role').value = employee.role;
+            editModal.classList.remove('hidden');
+        }
+        function closeEditEmployeeModal() { editModal.classList.add('hidden'); }
+        function saveEmployee() {
+            const id = parseInt(document.getElementById('edit-employee-id').value);
+            const name = document.getElementById('edit-employee-name').value;
+            const role = document.getElementById('edit-employee-role').value;
+            const index = humanEmployees.findIndex(e => e.id === id);
+            humanEmployees[index].name = name;
+            humanEmployees[index].role = role;
+            renderEmployeeList();
+            closeEditEmployeeModal();
+        }
+
+        const createModal = document.getElementById('create-employee-modal');
+        function openCreateEmployeeModal() { createModal.classList.remove('hidden'); }
+        function closeCreateEmployeeModal() { createModal.classList.add('hidden'); }
+        function addEmployee() {
+            const candidateId = parseInt(document.getElementById('new-employee-candidate').value);
+            const candidate = candidates.find(c => c.id === candidateId);
+            if (candidate && !humanEmployees.some(e => e.id === candidate.id)) {
+                humanEmployees.push(candidate);
+                renderEmployeeList();
+            }
+            closeCreateEmployeeModal();
+        }
+
+        // --- Onboarding Logic (simplified) ---
+        const onboardingContainer = document.getElementById('onboarding-content');
+        function startOnboarding() {
+            onboardingContainer.innerHTML = `
+                <div class="flex-grow flex flex-col p-4 text-center justify-center">
+                    <i data-lucide="bot" class="mx-auto h-16 w-16 text-indigo-500"></i>
+                    <h2 class="text-2xl font-bold mt-4">Создание сотрудника</h2>
+                    <p class="text-slate-600 mt-2 mb-6">Процесс создания сотрудника был упрощен для демонстрации. В реальной версии здесь будет интерактивный чат.</p>
+                    <button onclick="showRegistration()" class="w-full bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700">
+                        Перейти к регистрации
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+        function showRegistration() {
+            onboardingContainer.innerHTML = `
+                <div class="flex-grow flex flex-col p-8 text-center justify-center">
+                     <h2 class="text-2xl font-bold mb-2">Последний шаг</h2>
+                     <p class="text-slate-600 mb-8">Создайте учетную запись, чтобы сохранить агента и получить полный доступ к платформе.</p>
+                     <form onsubmit="event.preventDefault(); showPage('page-app');" class="space-y-4 text-left">
+                        <div><label for="reg-email" class="block text-sm font-medium text-slate-700">Email</label><input type="email" id="reg-email" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md" placeholder="you@example.com" required></div>
+                        <div><label for="reg-password" class="block text-sm font-medium text-slate-700">Пароль</label><input type="password" id="reg-password" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md" placeholder="••••••••" required></div>
+                        <button type="submit" class="w-full mt-4 flex justify-center py-3 px-4 border-transparent rounded-lg text-white bg-indigo-600 hover:bg-indigo-700">Сохранить и войти</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        // --- Drag and Drop Logic ---
+        let draggedItem = null;
+
+        function setupDragAndDrop(boardSelector, cardSelector, dataArray, statusArray, type) {
+            const board = document.querySelector(boardSelector);
+            board.addEventListener('dragstart', (e) => {
+                if (e.target.matches(cardSelector)) {
+                    draggedItem = e.target;
+                    setTimeout(() => e.target.classList.add('dragging'), 0);
+                }
+            });
+
+            board.addEventListener('dragend', (e) => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                }
+            });
+
+            board.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const column = e.target.closest('.kanban-column');
+                if (column) {
+                    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    column.classList.add('drag-over');
+                }
+            });
+            
+            board.addEventListener('dragleave', (e) => {
+                const column = e.target.closest('.kanban-column');
+                if (column) {
+                    column.classList.remove('drag-over');
+                }
+            });
+
+            board.addEventListener('drop', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                const column = e.target.closest('.kanban-column');
+                if (column && draggedItem) {
+                    const newStatus = column.dataset.status;
+                    const itemId = parseInt(draggedItem.dataset.id);
+                    const item = dataArray.find(i => i.id === itemId);
+                    
+                    if (type === 'deal') item.stage = newStatus;
+                    if (type === 'task') item.status = newStatus;
+                    
+                    if (type === 'deal') renderDealBoard();
+                    if (type === 'task') renderTaskBoard();
+                }
+            });
+        }
+        
+        function renderDealBoard() {
+            const board = document.getElementById('crm-kanban-board');
+            board.innerHTML = `<div class="flex space-x-4">
+                ${CRM_STAGES.map(stage => {
+                    const dealsInStage = deals.filter(d => d.stage === stage);
+                    return `
+                        <div class="w-72 bg-slate-200 rounded-lg p-3 flex-shrink-0 kanban-column" data-status="${stage}">
+                            <h3 class="font-semibold mb-3 text-slate-700">${stage} (${dealsInStage.length})</h3>
+                            <div class="space-y-3 min-h-[100px]">
+                                ${dealsInStage.map(deal => {
+                                    const client = clients.find(c => c.id === deal.clientId);
+                                    return `
+                                        <div class="bg-white p-3 rounded-md shadow kanban-card" draggable="true" data-id="${deal.id}" onclick="openDealDetailModal(${deal.id})">
+                                            <p class="font-medium">${deal.title}</p>
+                                            <p class="text-sm text-slate-500 mt-1">${deal.budget.toLocaleString('ru-RU')} ₽</p>
+                                            <p class="text-xs text-indigo-600 mt-2">${client.name}</p>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>`;
+            setupDragAndDrop('#crm-kanban-board', '.kanban-card', deals, CRM_STAGES, 'deal');
+        }
+
+        function renderTaskBoard() {
+            const board = document.getElementById('task-kanban-board');
+            const selectedProjectId = parseInt(document.getElementById('project-selector').value);
+            const projectTasks = tasks.filter(t => t.projectId === selectedProjectId);
+
+            board.innerHTML = `<div class="flex space-x-4">
+                ${TASK_STATUSES.map(status => {
+                    const tasksInStatus = projectTasks.filter(t => t.status === status);
+                    return `
+                        <div class="w-72 bg-slate-200 rounded-lg p-3 flex-shrink-0 kanban-column" data-status="${status}">
+                            <h3 class="font-semibold mb-3 text-slate-700">${status} (${tasksInStatus.length})</h3>
+                            <div class="space-y-3 min-h-[100px]">
+                                ${tasksInStatus.map(task => {
+                                    const assignees = task.assigneeIds.map(id => humanEmployees.find(e => e.id === id));
+                                    return `
+                                        <div class="bg-white p-3 rounded-md shadow kanban-card" draggable="true" data-id="${task.id}" onclick="openTaskDetailModal(${task.id})">
+                                            <p class="font-medium">${task.title}</p>
+                                            <div class="flex items-center justify-between mt-2">
+                                                <span class="text-xs text-slate-500">${task.dueDate || ''}</span>
+                                                <div class="flex -space-x-2">
+                                                    ${assignees.map(a => `<img src="https://placehold.co/24x24/E0E7FF/4F46E5?text=${a.name.charAt(0)}" class="rounded-full border-2 border-white">`).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>`;
+             setupDragAndDrop('#task-kanban-board', '.kanban-card', tasks, TASK_STATUSES, 'task');
+        }
+
+        // --- Telematon Logic ---
+        function renderCallLog() {
+            const container = document.getElementById('call-log-table-container');
+            container.innerHTML = `
+                <table class="w-full text-sm text-left text-slate-500">
+                    <thead class="text-xs text-slate-700 uppercase bg-slate-50"><tr>
+                        <th class="px-6 py-3">Время</th><th class="px-6 py-3">Номер</th><th class="px-6 py-3">Длительность</th><th class="px-6 py-3">Статус</th><th class="px-6 py-3">Запись</th>
+                    </tr></thead>
+                    <tbody>
+                        ${callLog.map(call => `
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4">${call.time}</td>
+                                <td class="px-6 py-4">${call.number}</td>
+                                <td class="px-6 py-4">${call.duration}</td>
+                                <td class="px-6 py-4 ${call.status === 'Принят' ? 'text-green-600' : 'text-red-600'}">${call.status}</td>
+                                <td class="px-6 py-4">
+                                    <button onclick="playRecording(this, ${call.id})" class="text-slate-500 hover:text-indigo-600">
+                                        <i data-lucide="play-circle" class="h-5 w-5"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            lucide.createIcons();
+        }
+        
+        function playRecording(buttonEl, callId) {
+            const icon = buttonEl.querySelector('i');
+            if (icon.getAttribute('data-lucide') === 'play-circle') {
+                // Simulate playing
+                buttonEl.innerHTML = `<i data-lucide="pause-circle" class="h-5 w-5 text-indigo-600"></i>`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    buttonEl.innerHTML = `<i data-lucide="play-circle" class="h-5 w-5"></i>`;
+                    lucide.createIcons();
+                }, 3000); // Simulate a 3-second recording
+            }
+        }
+        
+        const dialpadDisplay = document.getElementById('dialpad-display');
+        function appendToDialer(digit) {
+            dialpadDisplay.textContent += digit;
+        }
+        function backspaceDialer() {
+            dialpadDisplay.textContent = dialpadDisplay.textContent.slice(0, -1);
+        }
+        function initiateCall() {
+            const number = dialpadDisplay.textContent;
+            if (!number) return;
+            const statusEl = document.getElementById('dialpad-status');
+            statusEl.textContent = `Звонок на ${number}...`;
+            
+            setTimeout(() => {
+                statusEl.textContent = 'Звонок завершен';
+                const now = new Date();
+                const newCall = {
+                    id: callLog.length + 1,
+                    time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
+                    number: number,
+                    duration: '01:15',
+                    status: 'Принят'
+                };
+                callLog.unshift(newCall); // Add to the beginning of the log
+                renderCallLog();
+                dialpadDisplay.textContent = '';
+                setTimeout(() => statusEl.textContent = '', 2000);
+            }, 2500);
+        }
+
+        // --- Slotomaton (Calendar) Logic ---
+        let calendarState = {
+            currentDate: new Date('2025-08-18'),
+            currentView: 'week', // 'month', 'week', 'day'
+        };
+
+        function initCalendar() {
+            renderCalendar();
+            setupCalendarDragAndDrop();
+        }
+
+        function renderCalendar() {
+            renderCalendarHeader();
+            const grid = document.getElementById('calendar-grid');
+            if (calendarState.currentView === 'month') grid.innerHTML = renderMonthView();
+            if (calendarState.currentView === 'week') grid.innerHTML = renderWeekView();
+            if (calendarState.currentView === 'day') grid.innerHTML = renderDayView();
+            lucide.createIcons();
+        }
+
+        function renderCalendarHeader() {
+            const header = document.getElementById('calendar-header');
+            const viewNames = { month: 'Месяц', week: 'Неделя', day: 'День' };
+            let title = '';
+            if (calendarState.currentView === 'month') title = calendarState.currentDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+            if (calendarState.currentView === 'week') {
+                const startOfWeek = new Date(calendarState.currentDate);
+                startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() || 7) + 1);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
+                title = `${startOfWeek.toLocaleDateString('ru-RU', {day:'numeric', month:'long'})} - ${endOfWeek.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year: 'numeric'})}`;
+            }
+            if (calendarState.currentView === 'day') title = calendarState.currentDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            
+            header.innerHTML = `
+                <div class="flex items-center space-x-2">
+                     <button onclick="openCreateEventModal()" class="flex items-center space-x-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">
+                        <i data-lucide="plus" class="h-5 w-5"></i>
+                        <span>Создать событие</span>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="navigateCalendar(-1)" class="p-2 rounded-md hover:bg-slate-100"><i data-lucide="chevron-left"></i></button>
+                    <button onclick="navigateCalendar(0)" class="px-4 py-2 text-sm font-semibold border rounded-md hover:bg-slate-100">Сегодня</button>
+                    <button onclick="navigateCalendar(1)" class="p-2 rounded-md hover:bg-slate-100"><i data-lucide="chevron-right"></i></button>
+                    <h2 class="text-xl font-semibold ml-4">${title}</h2>
+                </div>
+                <div class="flex items-center space-x-1 bg-slate-200 p-1 rounded-lg">
+                    ${Object.keys(viewNames).map(view => `
+                        <button onclick="switchCalendarView('${view}')" class="${calendarState.currentView === view ? 'bg-white shadow' : ''} px-3 py-1 text-sm font-semibold rounded-md">${viewNames[view]}</button>
+                    `).join('')}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function navigateCalendar(direction) {
+            const d = calendarState.currentDate;
+            if (direction === 0) { // Today
+                calendarState.currentDate = new Date();
+            } else {
+                if (calendarState.currentView === 'month') d.setMonth(d.getMonth() + direction);
+                if (calendarState.currentView === 'week') d.setDate(d.getDate() + 7 * direction);
+                if (calendarState.currentView === 'day') d.setDate(d.getDate() + direction);
+            }
+            renderCalendar();
+        }
+
+        function switchCalendarView(view) {
+            calendarState.currentView = view;
+            renderCalendar();
+        }
+        
+        function renderMonthView() {
+            const d = calendarState.currentDate;
+            const year = d.getFullYear();
+            const month = d.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDayOfWeek = (firstDay.getDay() || 7) - 1; // 0=Mon, 6=Sun
+
+            let html = '<div class="grid grid-cols-7">';
+            const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            daysOfWeek.forEach(day => {
+                html += `<div class="text-center font-semibold text-sm py-2">${day}</div>`;
+            });
+
+            // Add blank days for the previous month
+            for (let i = 0; i < startDayOfWeek; i++) {
+                html += '<div class="border border-slate-200 bg-slate-50"></div>';
+            }
+
+            // Add days of the current month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const currentDate = new Date(year, month, day);
+                const eventsOnDay = events.filter(e => e.start.toDateString() === currentDate.toDateString());
+                html += `<div class="border border-slate-200 h-32 p-1 overflow-y-auto" onclick="openCreateEventModal('${currentDate.toISOString()}')">
+                    <p class="font-semibold">${day}</p>
+                    ${eventsOnDay.map(event => `
+                        <div class="bg-${event.color}-100 text-${event.color}-800 text-xs p-1 rounded mt-1 truncate calendar-event" onclick="event.stopPropagation(); openCreateEventModal(null, ${event.id})">${event.title}</div>
+                    `).join('')}
+                </div>`;
+            }
+
+            // Add blank days for the next month
+            const totalCells = startDayOfWeek + daysInMonth;
+            const remainingCells = (7 - (totalCells % 7)) % 7;
+            for (let i = 0; i < remainingCells; i++) {
+                html += '<div class="border border-slate-200 bg-slate-50"></div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function renderWeekView() {
+            let html = '<div class="grid grid-cols-8 h-full"><div class="w-16"></div>'; // Time column
+            const startOfWeek = new Date(calendarState.currentDate);
+            startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() || 7) + 1);
+            
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setDate(day.getDate() + i);
+                html += `<div class="text-center border-l border-slate-200">
+                    <p class="text-sm">${day.toLocaleDateString('ru-RU', { weekday: 'short' })}</p>
+                    <p class="text-2xl font-semibold">${day.getDate()}</p>
+                </div>`;
+            }
+            html += '</div><div class="grid grid-cols-8 h-full -mt-12"><div class="w-16 border-r border-slate-200">'; // Main grid
+            for(let hour = 8; hour < 19; hour++) {
+                html += `<div class="h-16 text-right pr-2 text-xs text-slate-500">${hour}:00</div>`;
+            }
+            html += '</div>';
+
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek);
+                day.setDate(day.getDate() + i);
+                html += `<div class="border-l border-slate-200 relative">`;
+                for(let hour = 8; hour < 19; hour++) {
+                    const slotDate = new Date(day);
+                    slotDate.setHours(hour, 0, 0, 0);
+                    html += `<div class="h-16 border-t border-slate-200" data-date="${slotDate.toISOString()}" onclick="openCreateEventModal(this.dataset.date)"></div>`;
+                }
+                // Render events for this day
+                events.filter(e => e.start.toDateString() === day.toDateString()).forEach(event => {
+                    const top = (event.start.getHours() - 8 + event.start.getMinutes() / 60) * 64; // 64px per hour
+                    const height = (event.end - event.start) / (1000 * 60 * 60) * 64;
+                    html += `<div draggable="true" onclick="event.stopPropagation(); openCreateEventModal(null, ${event.id})" data-id="${event.id}" class="absolute left-1 right-1 bg-${event.color}-100 border-l-4 border-${event.color}-500 p-1 rounded-md text-xs calendar-event" style="top: ${top}px; height: ${height}px;">
+                        <p class="font-semibold text-${event.color}-800">${event.title}</p>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+            html += '</div>';
+            return html;
+        }
+        
+        function renderDayView() {
+            const day = calendarState.currentDate;
+            let html = '<div class="grid grid-cols-1 h-full"><div class="flex"><div class="w-16 border-r border-slate-200 flex-shrink-0">'; // Main grid
+            for(let hour = 8; hour < 19; hour++) {
+                html += `<div class="h-16 text-right pr-2 text-xs text-slate-500">${hour}:00</div>`;
+            }
+            html += '</div>';
+
+            html += `<div class="border-l border-slate-200 relative flex-grow">`;
+            for(let hour = 8; hour < 19; hour++) {
+                const slotDate = new Date(day);
+                slotDate.setHours(hour, 0, 0, 0);
+                html += `<div class="h-16 border-t border-slate-200" data-date="${slotDate.toISOString()}" onclick="openCreateEventModal(this.dataset.date)"></div>`;
+            }
+            // Render events for this day
+            events.filter(e => e.start.toDateString() === day.toDateString()).forEach(event => {
+                const top = (event.start.getHours() - 8 + event.start.getMinutes() / 60) * 64; // 64px per hour
+                const height = (event.end - event.start) / (1000 * 60 * 60) * 64;
+                html += `<div draggable="true" onclick="event.stopPropagation(); openCreateEventModal(null, ${event.id})" data-id="${event.id}" class="absolute left-2 right-2 bg-${event.color}-100 border-l-4 border-${event.color}-500 p-2 rounded-lg text-sm calendar-event" style="top: ${top}px; height: ${height}px;">
+                    <p class="font-semibold text-${event.color}-800">${event.title}</p>
+                </div>`;
+            });
+            html += `</div></div></div>`;
+            return html;
+        }
+
+        const createEventModal = document.getElementById('create-event-modal');
+        function openCreateEventModal(isoDate, eventId = null) {
+            const form = document.getElementById('create-event-form');
+            form.reset();
+            const clientSelect = document.getElementById('event-client');
+            const dealSelect = document.getElementById('event-deal');
+            clientSelect.innerHTML = '<option value="">Не выбран</option>' + clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            dealSelect.innerHTML = '<option value="">Не выбрана</option>' + deals.map(d => `<option value="${d.id}">${d.title}</option>`).join('');
+
+            if (eventId) {
+                const event = events.find(e => e.id === eventId);
+                document.getElementById('event-modal-title').textContent = 'Редактировать запись';
+                document.getElementById('event-id').value = event.id;
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-start').value = new Date(event.start.getTime() - (event.start.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                document.getElementById('event-end').value = new Date(event.end.getTime() - (event.end.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                if (event.clientId) clientSelect.value = event.clientId;
+                if (event.dealId) dealSelect.value = event.dealId;
+                document.getElementById('delete-event-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('event-modal-title').textContent = 'Новая запись';
+                document.getElementById('event-id').value = '';
+                const startDate = isoDate ? new Date(isoDate) : new Date();
+                const endDate = new Date(startDate);
+                endDate.setHours(endDate.getHours() + 1);
+                document.getElementById('event-start').value = new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                document.getElementById('event-end').value = new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                document.getElementById('delete-event-btn').classList.add('hidden');
+            }
+            createEventModal.classList.remove('hidden');
+        }
+        function closeCreateEventModal() { createEventModal.classList.add('hidden'); }
+        
+        function saveNewEvent() {
+            const id = document.getElementById('event-id').value;
+            const eventData = {
+                title: document.getElementById('event-title').value,
+                start: new Date(document.getElementById('event-start').value),
+                end: new Date(document.getElementById('event-end').value),
+                clientId: parseInt(document.getElementById('event-client').value) || null,
+                dealId: parseInt(document.getElementById('event-deal').value) || null,
+                color: 'indigo'
+            };
+
+            if (id) {
+                const index = events.findIndex(e => e.id == id);
+                events[index] = { ...events[index], ...eventData };
+            } else {
+                eventData.id = events.length + 1;
+                events.push(eventData);
+            }
+            renderCalendar();
+            closeCreateEventModal();
+        }
+
+        function deleteEvent() {
+            const id = document.getElementById('event-id').value;
+            if (id && confirm('Вы уверены, что хотите удалить эту запись?')) {
+                events = events.filter(e => e.id != id);
+                renderCalendar();
+                closeCreateEventModal();
+            }
+        }
+        
+        function setupCalendarDragAndDrop() {
+            const board = document.getElementById('calendar-grid');
+            board.addEventListener('dragstart', (e) => {
+                if (e.target.matches('.calendar-event')) {
+                    draggedItem = e.target;
+                    setTimeout(() => e.target.classList.add('dragging'), 0);
+                }
+            });
+             board.addEventListener('dragend', (e) => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                }
+            });
+            board.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            board.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const slot = e.target.closest('[data-date]');
+                if (slot && draggedItem) {
+                    const eventId = parseInt(draggedItem.dataset.id);
+                    const event = events.find(e => e.id === eventId);
+                    const newStartDate = new Date(slot.dataset.date);
+                    const duration = event.end - event.start;
+                    const newEndDate = new Date(newStartDate.getTime() + duration);
+                    event.start = newStartDate;
+                    event.end = newEndDate;
+                    renderCalendar();
+                }
+            });
+        }
+        
+        // --- Settings Logic ---
+        function switchSettingsTab(event, tabName) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                const isTarget = tab.getAttribute('onclick').includes(tabName);
+                tab.classList.toggle('tab-active', isTarget);
+                tab.classList.toggle('tab-inactive', !isTarget);
+            });
+            document.getElementById('settings-tab-content-integrations').classList.toggle('hidden', tabName !== 'integrations');
+            document.getElementById('settings-tab-content-billing').classList.toggle('hidden', tabName !== 'billing');
+            
+            if (tabName === 'billing') {
+                switchBillingTab(null, 'plans'); // Default to plans
+            }
+        }
+
+        function switchBillingTab(event, tabName) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('.billing-tab').forEach(tab => {
+                const isTarget = tab.getAttribute('onclick').includes(tabName);
+                tab.classList.toggle('tab-active', isTarget);
+                tab.classList.toggle('tab-inactive', !isTarget);
+            });
+            document.getElementById('billing-tab-content-plans').classList.toggle('hidden', tabName !== 'plans');
+            document.getElementById('billing-tab-content-payment-methods').classList.toggle('hidden', tabName !== 'payment-methods');
+            document.getElementById('billing-tab-content-history').classList.toggle('hidden', tabName !== 'history');
+        }
+
+        // --- Analytics Logic ---
+        function switchAnalyticsTab(event, tabName) {
+            if (event) event.preventDefault();
+             document.querySelectorAll('.analytics-tab').forEach(tab => {
+                const isTarget = tab.getAttribute('onclick').includes(tabName);
+                tab.classList.toggle('tab-active', isTarget);
+                tab.classList.toggle('tab-inactive', !isTarget);
+            });
+            
+            const contentEl = document.getElementById('analytics-content');
+            let html = '';
+            switch(tabName) {
+                case 'summary':
+                    html = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-slate-100 p-4 rounded-lg"><h3 class="text-slate-500">Выручка</h3><p class="text-2xl font-bold mt-1">1,250,000 ₽</p></div>
+                            <div class="bg-slate-100 p-4 rounded-lg"><h3 class="text-slate-500">Новых клиентов</h3><p class="text-2xl font-bold mt-1">32</p></div>
+                            <div class="bg-slate-100 p-4 rounded-lg"><h3 class="text-slate-500">Конверсия в сделку</h3><p class="text-2xl font-bold mt-1">15%</p></div>
+                            <div class="bg-slate-100 p-4 rounded-lg"><h3 class="text-slate-500">Средний чек</h3><p class="text-2xl font-bold mt-1">125,000 ₽</p></div>
+                        </div>
+                        <div class="mt-6"><img src="https://placehold.co/800x400/f1f5f9/4f46e5?text=Main+Chart" class="rounded-lg w-full" alt="Chart"></div>
+                    `;
+                    break;
+                case 'deals':
+                    html = `
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-1 bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold mb-2">Воронка продаж</h3>
+                                <!-- Funnel placeholder -->
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between"><span>Новый лид</span><span class="font-bold">100</span></div>
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: 100%"></div></div>
+                                    <div class="flex justify-between"><span>Квалификация</span><span class="font-bold">60</span></div>
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: 60%"></div></div>
+                                    <div class="flex justify-between"><span>Переговоры</span><span class="font-bold">25</span></div>
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: 25%"></div></div>
+                                    <div class="flex justify-between"><span>Успех</span><span class="font-bold">15</span></div>
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-indigo-600 h-2.5 rounded-full" style="width: 15%"></div></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-2 bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold">Динамика сделок</h3>
+                                <img src="https://placehold.co/600x300/f1f5f9/4f46e5?text=Deals+Chart" class="mt-2 rounded w-full" alt="Deals Chart">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'employees':
+                     html = `
+                        <div class="bg-slate-100 p-4 rounded-lg">
+                            <h3 class="font-semibold mb-2">Производительность сотрудников</h3>
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-600 uppercase"><tr><th class="py-2">Сотрудник</th><th>Закрыто сделок</th><th>Выполнено задач</th><th>Среднее время ответа</th></tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-200"><td class="py-2 font-medium">Мария Иванова</td><td>12</td><td>35</td><td class="text-green-600">5 мин</td></tr>
+                                    <tr class="border-b border-slate-200"><td class="py-2 font-medium">Алексей Смирнов</td><td>8</td><td>28</td><td class="text-amber-600">15 мин</td></tr>
+                                    <tr class="border-b border-slate-200"><td class="py-2 font-medium">Дарья Кузнецова</td><td>3</td><td>41</td><td class="text-green-600">3 мин</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                     `;
+                    break;
+                case 'tasks':
+                    html = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold">Статусы задач</h3>
+                                <img src="https://placehold.co/400x250/f1f5f9/4f46e5?text=Tasks+Pie+Chart" class="mt-2 rounded w-full" alt="Tasks Chart">
+                            </div>
+                             <div class="bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold">Задачи по проектам</h3>
+                                <img src="https://placehold.co/400x250/f1f5f9/4f46e5?text=Tasks+Bar+Chart" class="mt-2 rounded w-full" alt="Tasks Chart">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'communications':
+                     html = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold">Активность по каналам</h3>
+                                <img src="https://placehold.co/400x250/f1f5f9/4f46e5?text=Channels+Chart" class="mt-2 rounded w-full" alt="Channels Chart">
+                            </div>
+                             <div class="bg-slate-100 p-4 rounded-lg">
+                                <h3 class="font-semibold">Нагрузка по часам</h3>
+                                <img src="https://placehold.co/400x250/f1f5f9/4f46e5?text=Hourly+Load+Chart" class="mt-2 rounded w-full" alt="Load Chart">
+                            </div>
+                        </div>
+                     `;
+                    break;
+            }
+            contentEl.innerHTML = html;
+        }
+
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            showPage('page-landing');
+        });
+    </script>
+</body>
+</html>
