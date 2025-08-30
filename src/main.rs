@@ -23,6 +23,7 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(routes::index))
             .route("/components", web::get().to(routes::components))
             .route("/kanban", web::get().to(routes::kanban))
+            .route("/reference", web::get().to(routes::reference))
             .default_service(web::route().to(routes::not_found))
     })
     .bind(("127.0.0.1", 8080))?
