@@ -1,5 +1,19 @@
-{% extends "admin-base.html" %}
-{% block admin_content %}
-    <main>
-    </main>
+{% extends "admin-base.html" %} {% block admin_content %}
+<template id="kanban-column-template">
+	<div class="kanban-column card min-h-[400px] w-[400px]">
+		<h2 class="kanban-status-name"></h2>
+		<div class="kanban-column-subtasks flex flex-col gap-2"></div>
+	</div>
+</template>
+
+<template id="kanban-subtask-template">
+	<div class="card kanban-card data-card cursor-grab" draggable="true">
+		<h3 class="subtask-name"></h3>
+	</div>
+</template>
+
+<main>
+	<div class="grid grid-cols-3 gap-2" id="kanban-container"></div>
+</main>
+<script src="/static/js/components/kanban/main.js" type="module"></script>
 {% endblock %}
