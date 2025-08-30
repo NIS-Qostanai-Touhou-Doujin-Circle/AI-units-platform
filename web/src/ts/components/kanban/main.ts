@@ -111,7 +111,6 @@ function columnHandlers(column: JQuery<HTMLElement>): {
 		event.preventDefault();
 
 		const i = findSpot(event, subtasks.get(0)!);
-		column.find("h2").text(i);
 		if (i !== oldSpot) {
 			if (i < subtasks.find(".kanban-card").length) {
 				kanbanPlaceholder.insertBefore(
