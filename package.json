@@ -19,8 +19,8 @@
 	"scripts": {
 		"build:postcss": "postcss ./web/src/static/css/in.css -o ./web/out/static/stylesheet.css --verbose",
 		"watch:postcss": "npx watch \"npm run build:postcss\" web/src",
-		"build:ts": "esbuild web/src/ts/**/*.ts --bundle --outdir=web/out/static/js --sourcemap --format=esm --splitting --minify",
-		"watch:ts": "esbuild web/src/ts/**/*.ts --bundle --outdir=web/out/static/js --sourcemap --format=esm --splitting --watch",
+		"build:ts": "npx esbuild \"web/src/ts/**/*.ts\" --bundle --outdir=web/out/static/js --sourcemap --format=esm --splitting --minify",
+		"watch:ts": "npx esbuild \"web/src/ts/**/*.ts\" --bundle --outdir=web/out/static/js --sourcemap --format=esm --splitting --watch",
 		"build:html": "cpx \"web/src/templates/**/*.html\" web/out",
 		"watch:html": "cpx \"web/src/templates/**/*.html\" web/out --watch --verbose",
 		"build:assets": "cpx \"web/src/static/assets/**/*\" web/out/static/assets",
