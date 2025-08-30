@@ -1,7 +1,7 @@
 {% extends "admin-base.html" %} {% block admin_content %}
 <template id="kanban-column-template">
-	<div class="kanban-column card min-h-[400px] w-[400px]">
-		<h2 class="kanban-status-name"></h2>
+	<div class="kanban-column card min-h-[400px] w-[300px] lg:w-[400px]">
+		<h2 class="kanban-status-name w-max"></h2>
 		<div class="kanban-column-subtasks flex flex-col gap-2"></div>
 	</div>
 </template>
@@ -12,8 +12,8 @@
 	</div>
 </template>
 
-<main>
-	<div class="grid grid-cols-3 gap-2" id="kanban-container"></div>
+<main class="overflow-x-scroll">
+	<div class="flex flex-row gap-2 w-fit" id="kanban-container"></div>
 </main>
 <script src="/static/js/components/kanban/main.js" type="module"></script>
 {% endblock %}
