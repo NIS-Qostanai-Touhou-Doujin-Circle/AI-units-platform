@@ -30,3 +30,10 @@ export interface User {
 	name: string;
 	image_url?: string;
 }
+
+export interface KanbanMethods<T> {
+	getStatuses(): string[];
+	renderAsKanbanCard(obj: T): JQuery<HTMLElement>;
+	getStatusOf(obj: T): string | undefined;
+	createPlaceholder(): JQuery<HTMLElement>;
+}
