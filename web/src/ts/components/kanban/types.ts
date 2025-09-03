@@ -32,7 +32,7 @@ export interface User {
 }
 
 export interface KanbanMethods<T> {
-	getStatuses(): string[];
+	getStatuses(): {status: string, ru_RU: string}[];
 	renderAsKanbanCard(obj: T): JQuery<HTMLElement>;
 	getStatusOf(obj: T): string | undefined;
 	createPlaceholder(): JQuery<HTMLElement>;
