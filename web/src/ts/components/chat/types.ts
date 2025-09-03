@@ -8,7 +8,7 @@ export interface ChatMessage {
 }
 
 export interface ChatMessageComponent {
-	type: "text" | "reply" | "image";
+	type: "text" | "reply" | "image"; // Todo: video, docs, missed_call, audio
 	content: string;
 }
 
