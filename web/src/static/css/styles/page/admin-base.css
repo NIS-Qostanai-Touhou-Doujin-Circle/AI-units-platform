@@ -29,9 +29,14 @@
 		@apply transition-[transform,translate,box-shadow] duration-500 ease-in-out;
 		@apply -translate-x-full;
 
+		select {
+			@apply mx-auto p-4 bg-white shadow-sm my-2 rounded-lg block;
+			@apply w-[90%] max-w-xs;
+		}
+
 		nav {
 			li {
-                @apply even:bg-gray-50;
+                @apply odd:bg-gray-50;
 				a {
 					@apply flex items-center gap-1 p-2 py-6;
 				}
