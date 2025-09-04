@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             .route("/components", web::get().to(routes::components))
             .route("/kanban", web::get().to(routes::kanban))
             .route("/reference", web::get().to(routes::reference))
+            .route("/chats", web::get().to(routes::chats))
             .default_service(web::route().to(routes::not_found))
     })
     .bind(("0.0.0.0", 8080))?
