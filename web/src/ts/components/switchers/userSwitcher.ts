@@ -47,5 +47,13 @@ export function getSelectedUserId(): number | null {
     return parsed;
 }
 
+export function getSelectedUserName(): string | null {
+    const selectedVal = localStorage.getItem("selectedUser");
+    if (!selectedVal) return null;
+    const selectedOption = switcher.find(`option[value='${selectedVal}']`);
+    if (selectedOption.length === 0) return null;
+    return selectedOption.text();
+}
+
 // Don't call init here, because the company switcher must be initialized first
 // The company switcher will call initUserSwitcher after initialization
