@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { WAZZUP_API_URL } from '../../config';
 
 const switcher = $('#company-switcher');
 
@@ -6,7 +7,7 @@ export function initCompanySwitcher() {
     const selectedVal = localStorage.getItem('selectedCompany');
 
 	$.ajax({
-		url: "http://167.99.129.124:1242/api/companies",
+		url: `${WAZZUP_API_URL}/companies`,
 		method: "GET",
 		success: function (data) {
 			const $select = $("#company-switcher");
