@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { WAZZUP_API_URL } from '../../config';
+import { initUserSwitcher } from './userSwitcher';
 
 const switcher = $('#company-switcher');
 
@@ -29,6 +30,7 @@ export function initCompanySwitcher() {
 				localStorage.setItem("selectedCompany", `${selectedCompanyId}`);
 				location.reload();
 			});
+			initUserSwitcher();
 		},
 		error: function () {
 			console.error("Failed to load companies");

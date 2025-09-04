@@ -1,0 +1,27 @@
+{% extends "admin-base.html" %} {% block admin_content %}
+
+<template id="chat-preview-template">
+    <div class="chat-preview card cursor-pointer p-2" data-chat-id="">
+        <h2 class="chat-name text-lg font-bold"></h2>
+        <p class="last-message text-sm text-gray-600"></p>
+        <time class="last-message-time text-xs text-gray-400"></time>
+    </div>
+</template>
+
+<main>
+    <div class="grid grid-cols-[200px_auto]">
+        <div>
+            <h1>Чаты</h1>
+            <div id="chats-container">
+        
+            </div>
+        </div>
+        <div id="chat-messages-container">
+
+        </div>
+    </div>
+</main>
+<script type="module" src="/static/js/page/chats.js"></script>
+
+
+{% endblock %}
