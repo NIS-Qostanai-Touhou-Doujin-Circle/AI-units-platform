@@ -1,0 +1,7 @@
+.chat-preview {
+    @apply p-2 bg-white cursor-pointer hover:bg-gray-100;
+    @apply border-t border-x border-gray-300;
+    &:last-child {
+        @apply border-b;
+    }
+}
