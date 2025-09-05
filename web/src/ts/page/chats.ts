@@ -59,6 +59,17 @@ function chatClickHandler(chatPreview: ChatPreview) {
             source: chatPreview.channel_type,
             messages: await getMessagesForChat(chatId),
         });
+        toggleChat(true);
+    }
+}
+
+function toggleChat(show: boolean) {
+    if (show) {
+        chatsCont.parent().addClass('hidden');
+        chatMsgCont.parent().removeClass('hidden');
+    } else {
+        chatsCont.parent().removeClass('hidden');
+        chatMsgCont.parent().addClass('hidden');
     }
 }
 
