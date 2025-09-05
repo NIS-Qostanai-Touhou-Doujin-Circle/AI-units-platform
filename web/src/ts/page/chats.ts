@@ -11,6 +11,11 @@ import { ChatMessage } from "../components/chat/types";
 const chatsCont = $('#chats-container');
 const chatMsgCont = $('#chat-messages-container');
 const previewTmplt = $(getTemplate('chat-preview-template'));
+const backChatBtn = $('#back-chat-button');
+
+backChatBtn.on('click', () => {
+    toggleChat(false);
+});
 
 export function initChatsPage() {
     const company = getSelectedCompanyId();
