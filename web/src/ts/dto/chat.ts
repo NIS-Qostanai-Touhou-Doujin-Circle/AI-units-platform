@@ -35,3 +35,12 @@ export type DtoMessageComponent = {
     content: string;
     type: 'text' | 'image' | 'reply';
 }
+
+
+export type SendMessagePost = {
+    channelId: string;
+    chatId: string;
+    contentType: 'text',
+    senderId: number;
+    text: string;
+}

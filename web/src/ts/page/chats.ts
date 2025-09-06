@@ -1,6 +1,6 @@
 import { Chat } from "../components/chat/chat";
 import { getSelectedCompanyId } from "../components/switchers/companySwitcher";
-import { ChatPreview, DtoMessage, GetChatMessagesResponse, GetChatResponse, GetChatsResponse } from "../dto/chat";
+import { ChatPreview, DtoMessage, GetChatMessagesResponse, GetChatResponse, GetChatsResponse, SendMessagePost } from "../dto/chat";
 import $ from 'jquery';
 import getTemplate from "../helpers/getTemplate";
 import unknownToString from "../helpers/unknownToString";
@@ -72,8 +72,25 @@ function chatClickHandler(chatPreview: ChatPreview) {
             messages: await getMessagesForChat(chatId),
             inputParams: {
                 sendMessage(message) {
-                    alert(JSON.stringify(message));
-                    return Promise.resolve({id: 'temp-id'});
+                    const dto = {
+                        channelId: chatPreview.channel_id,
+                        chatId: chatId,
+                        contentType: 'text',
+                        senderId: getSelectedUserId()!,
+                        text: message[0].content,
+                    } as SendMessagePost;
+                    return fetch(`${WAZZUP_API_URL}/messages/${getSelectedCompanyId()}/send`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(dto),
+                    }).then(async response => {
+                        if (!response.ok) {
+                            return {error: `Failed to send message: ${response.statusText}`};
+                        }
+                        return {id: (await response.json()).messageId};
+                    });
                 },
             }
         });
