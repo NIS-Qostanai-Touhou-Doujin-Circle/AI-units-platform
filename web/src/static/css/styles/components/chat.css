@@ -16,6 +16,9 @@
     &.chat-message-sending {
         @apply opacity-50;
     }
+    &.chat-message-failed {
+        @apply border border-red-500;
+    }
     cite {
         @apply hidden not-italic text-sm font-bold;
     }

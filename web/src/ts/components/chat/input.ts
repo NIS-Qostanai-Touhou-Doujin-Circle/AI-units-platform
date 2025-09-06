@@ -66,6 +66,10 @@ export function createInput(
 					element.dataset.messageId = success.id;
 					doneSending(success.id);
 				} else {
+					alert(success.error);
+					// Mark message as failed
+					$(element).addClass("chat-message-failed");
+					// Restore text in input
 					$(inputElement).find("textarea").val(text);
 				}
 			}
