@@ -7,12 +7,6 @@
   - [ ] Add **`relation_updated_at`** - `timestamptz`
       - When the task *itself* or *any* of its descendants (at any level) is created, updated, or deleted. This field must be updated for the modified task and all of its ancestors up the chain. This is crucial for the frontend polling mechanism.
 
-## Backend Logic
-- [ ] Implement a service function for cascading timestamp updates
-  - [ ] This function takes a `task_id` as input.
-  - [ ] It should update the `relation_updated_at` field for the corresponding task and then recursively for all its parents (`parent_task_id`) until it reaches a root task.
-  - [ ] This function will be called by all API endpoints that modify task data.
-
 ## API Endpoints
 ### Basic CRUD
 - [ ] `POST /tasks` - Create a new task/subtask
@@ -28,10 +22,10 @@
 
 ### Data Retrieval
 - [ ] `GET /tasks/{id}` - Get a single task
-  - [ ] Response should include all task fields and a list of its assignees from `task_assignments`.
-- [ ] `GET /projects/{projectId}/tasks` - Get all tasks for a project
-  - [ ] Returns a flat list of all tasks associated with a `project_id`.
-  - [ ] The frontend will be responsible for building the tree/board structure from this list.
+	- [ ] Response should include all task fields and a list of its assignees from `task_assignments`.
+	- [ ] Response should contain first-level related subtasks
+- [ ] `GET /task/project/{id}` - Returns root task of the project and related to it subtasks 
+	- [ ] Only first-level related subtasks returned
 
 ### Movement & Status Changes
 - [ ] `PATCH /tasks/{id}/status` - Change task status (for simple clicks)
