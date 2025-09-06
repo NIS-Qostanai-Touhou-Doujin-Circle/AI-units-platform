@@ -28,5 +28,10 @@ export type DtoMessage = {
     content: string,
     created_at: string,
     id: string,
-    'type': 'text' | 'image' | 'reply',
+    is_inbound: boolean,
+}
+
+export type DtoMessageComponent = {
+    content: string;
+    type: 'text' | 'image' | 'reply';
 }

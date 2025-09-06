@@ -1,4 +1,9 @@
 {% extends "admin-base.html" %} {% block admin_content %}
+<style>
+body {
+	overflow-y: hidden;
+}
+</style>
 
 <template id="chat-preview-template">
 	<div class="chat-preview" data-chat-id="">
@@ -8,16 +13,15 @@
 	</div>
 </template>
 
-<main class="p-0 max-w-full w-md">
-	<div class="relative w-full">
-		<div class="absolute left-0 top-0 w-full">
+<main class="p-0 max-w-full w-md h-[calc(100vh-var(--header-height))] overflow-y-hidden">
+	<div class="relative w-full h-full">
+		<div class="absolute left-0 top-0 w-full h-full">
 			<div id="chats-container">
 				<p class="text-gray-600">Загрузка...</p>
 			</div>
 		</div>
-		<div class="absolute left-0 top-0 w-full hidden">
-			<div id="chat-messages-container">
-			
+		<div class="absolute left-0 top-0 w-full hidden h-[calc(100vh-var(--header-height))]">
+			<div id="chat-messages-container" class="w-full">
 			</div>
 			<button id="back-chat-button" class="primary absolute top-4 left-4 opacity-20">Назад</button>
 		</div>

@@ -32,7 +32,14 @@ export function initChatsPage() {
         data.chats.forEach(chatPreview => {
             const chatEl = previewTmplt.clone().find('> *').first();
             chatEl.find('.chat-name').text(chatPreview.chat_name);
-            chatEl.find('.last-message').text(chatPreview.last_message?.content || '');
+            // find the first text component in last_message content array
+            const content = JSON.parse(chatPreview.last_message?.content || '[]');
+            if (Array.isArray(content)) {
+                const textComponent = content.find(comp => comp.type === 'text');
+                chatEl.find('.last-message').text(textComponent ? textComponent.content : '[No text message]');
+            } else {
+                chatEl.find('.last-message').text('');
+            }
             chatEl.find('.last-message-date').text(new Date(chatPreview.last_message_date).toLocaleString());
             chatEl.find('.unread-count').text(chatPreview.unread_count > 0 ? chatPreview.unread_count.toString() : '');
             chatEl.data('chat-id', chatPreview.id);
@@ -63,6 +70,12 @@ function chatClickHandler(chatPreview: ChatPreview) {
             //@ts-ignore
             source: chatPreview.channel_type,
             messages: await getMessagesForChat(chatId),
+            inputParams: {
+                sendMessage(message) {
+                    alert(JSON.stringify(message));
+                    return Promise.resolve({id: 'temp-id'});
+                },
+            }
         });
         toggleChat(true);
     }
@@ -85,18 +98,14 @@ async function getMessagesForChat(chatId: number): Promise<ChatMessage[]> {
     }
     const chat: GetChatResponse = await response.json();
     const messages = chat.messages;
+    console.log(chat);
     return messages.map(msg => ({
         id: msg.id,
         senderId: msg.id,
-        content: [
-            {
-                type: 'text',
-                content: unknownToString(msg.content)
-            }
-        ],
+        content: JSON.parse(msg.content),
         timestamp: new Date(msg.created_at),
         isRead: true,
-        side: 'me',
+        side: msg.is_inbound ? 'them' : 'me',
         wasEdited: false,
     }));
 }
