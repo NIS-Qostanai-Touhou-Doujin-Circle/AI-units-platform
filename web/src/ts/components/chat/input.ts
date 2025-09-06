@@ -29,6 +29,7 @@ export function createInput(
                 </svg>
             </button>
         `;
+
 	$(inputElement)
 		.find("button.send")
 		.on("click", async () => {

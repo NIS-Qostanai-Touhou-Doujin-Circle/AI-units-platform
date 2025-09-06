@@ -1,7 +1,7 @@
 {% extends "admin-base.html" %} {% block admin_content %}
 <style>
 body {
-	overflow-y: hidden;
+	background-color: black;
 }
 </style>
 
@@ -13,14 +13,14 @@ body {
 	</div>
 </template>
 
-<main class="p-0 max-w-full w-md h-[calc(100vh-var(--header-height))] overflow-y-hidden">
-	<div class="relative w-full h-full">
-		<div class="absolute left-0 top-0 w-full h-full">
+<main class="p-0 max-w-full w-md overflow-y-hidden">
+	<div class="relative w-full h-[calc(100dvh-var(--header-height))]">
+		<div class="w-full h-full">
 			<div id="chats-container">
 				<p class="text-gray-600">Загрузка...</p>
 			</div>
 		</div>
-		<div class="absolute left-0 top-0 w-full hidden h-[calc(100vh-var(--header-height))]">
+		<div class="absolute left-0 top-0 w-full hidden h-full">
 			<div id="chat-messages-container" class="w-full">
 			</div>
 			<button id="back-chat-button" class="primary absolute top-4 left-4 opacity-20">Назад</button>

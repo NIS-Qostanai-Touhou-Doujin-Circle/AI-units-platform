@@ -61,6 +61,6 @@
     @apply flex items-center gap-1;
     textarea {
         @apply bg-white flex-1 border border-gray-300 rounded-lg p-2;
-        @apply resize-y;
+        @apply resize-none;
     }
 }
